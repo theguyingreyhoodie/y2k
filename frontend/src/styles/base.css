@@ -1,0 +1,233 @@
+/* ============================================================
+   Y2KEDIT design tokens. Light = Frutiger Aero daytime, dark = cyber night.
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --font-display: "Unbounded", "Chivo", system-ui, sans-serif;
+  --font-body: "Chivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-pixel: "Press Start 2P", ui-monospace, monospace;
+
+  --ground: #e2f5fe;
+  --ground-2: #f3fbff;
+  --surface: #ffffff;
+  --surface-2: #f1f7fc;
+  --surface-3: #e4eef7;
+  --ink: #0a1424;
+  --ink-2: #33445c;
+  --ink-3: #536479;
+  --line: #c5d4e3;
+  --line-2: #9bb0c6;
+
+  --aqua-hi: #a7eeff;
+  --aqua: #13b4ea;
+  --aqua-deep: #0a7cbd;
+  --aqua-ink: #045784;
+  --pink: #ff2ad2;
+  --pink-deep: #c20e9b;
+  --pink-ink: #a00b80;
+  --lime: #39ff14;
+  --gold: #ffd23f;
+  --danger: #c8103a;
+  --danger-bg: #fff0f3;
+  --ok: #0b8a4c;
+
+  --title-grad: linear-gradient(180deg, #ecfcff 0%, #b3eeff 45%, #74d8fa 50%, #4fc7f2 100%);
+  --title-ink: #03233a;
+  --title-text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 8px rgba(255, 255, 255, 0.6);
+  --title-star: #ff2ad2;
+  --window-border: rgba(40, 96, 148, 0.5);
+  --window-shadow: 0 22px 44px -22px rgba(6, 58, 108, 0.5), 0 4px 14px -6px rgba(6, 58, 108, 0.28);
+  --window-inner: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --stage-a: #e9f1f8;
+  --stage-b: #f8fbfe;
+
+  --radius-window: 12px;
+  --radius-control: 10px;
+  --ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--pink);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] body {
+  background:
+    radial-gradient(60% 50% at 6% 0%, rgba(255, 42, 210, 0.1), transparent 62%),
+    radial-gradient(50% 45% at 100% 8%, rgba(0, 212, 255, 0.07), transparent 62%),
+    radial-gradient(70% 55% at 50% 112%, rgba(140, 16, 82, 0.22), transparent 70%),
+    var(--ground);
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #08070c;
+  --ground-2: #0e0c14;
+  --surface: #15121c;
+  --surface-2: #1c1826;
+  --surface-3: #262131;
+  --ink: #f5f0fb;
+  --ink-2: #c7bed6;
+  --ink-3: #a096b3;
+  --line: #2e2939;
+  --line-2: #4a4159;
+
+  --aqua-ink: #85e6ff;
+  --pink-ink: #ff86e6;
+  --danger: #ff5d7f;
+  --danger-bg: #2a0f18;
+  --ok: #4be38f;
+
+  --title-grad: linear-gradient(180deg, #ff8ae9 0%, #d81aab 45%, #a30c85 50%, #5c0a40 100%);
+  --title-ink: #ffffff;
+  --title-text-shadow: 0 1px 1px rgba(60, 0, 40, 0.6);
+  --title-star: #ffffff;
+  --window-border: rgba(255, 92, 222, 0.3);
+  --window-shadow: 0 24px 48px -22px rgba(0, 0, 0, 0.9), 0 4px 14px -6px rgba(0, 0, 0, 0.6);
+  --window-inner: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --stage-a: #17141f;
+  --stage-b: #1f1b29;
+  --ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--pink);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(60% 50% at 6% 0%, rgba(98, 255, 60, 0.11), transparent 62%),
+    radial-gradient(50% 45% at 100% 8%, rgba(255, 42, 210, 0.09), transparent 62%),
+    radial-gradient(70% 55% at 50% 112%, rgba(0, 190, 255, 0.18), transparent 70%),
+    var(--ground);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  caret-color: var(--pink);
+  accent-color: var(--pink);
+  scrollbar-color: var(--line-2) transparent;
+}
+
+img,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--pink-ink);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--pink);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--pink);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  background: linear-gradient(180deg, #ff9fea, #ff2ad2) padding-box;
+  border-radius: 999px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff6fe0, #a30d84) padding-box;
+}
+
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
