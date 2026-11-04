@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="360" viewBox="0 0 220 120">
+<defs>
+  <linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fe3ff"/><stop offset="0.48" stop-color="#2bb8ee"/><stop offset="0.52" stop-color="#0b8fd6"/><stop offset="1" stop-color="#0a6fae"/></linearGradient>
+  <linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd6e0"/></linearGradient>
+</defs>
+<rect x="2" y="2" width="216" height="116" rx="7" fill="#eef2f7" stroke="#34445a" stroke-width="2"/>
+<path d="M2 9 a7 7 0 0 1 7 -7 h202 a7 7 0 0 1 7 7 v17 h-216 Z" fill="url(#t)"/>
+<text x="11" y="18" font-family="Verdana, Tahoma, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#ffffff">error.exe</text>
+<rect x="196" y="7" width="14" height="13" rx="3" fill="#ff5f87" stroke="#7d0f2c" stroke-width="1"/>
+<path d="M199.5 10.5 L206.5 16.5 M206.5 10.5 L199.5 16.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="30" cy="57" r="13" fill="#ff2a6d" stroke="#7d0f2c" stroke-width="1.4"/>
+<path d="M25 52 L35 62 M35 52 L25 62" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+<text x="52" y="53" font-family="Verdana, Tahoma, Arial, sans-serif" font-size="12" font-weight="700" fill="#0b1220">too cute to handle</text>
+<text x="52" y="69" font-family="Verdana, Tahoma, Arial, sans-serif" font-size="9.5" fill="#3c4a5e">please try again in 2003</text>
+<rect x="80" y="84" width="60" height="22" rx="11" fill="url(#b)" stroke="#5d6b80" stroke-width="1.2"/>
+<text x="110" y="99" text-anchor="middle" font-family="Verdana, Tahoma, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#0b1220">OK</text></svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="180" viewBox="0 0 200 56">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9fbff"/><stop offset="0.5" stop-color="#22c3f0"/><stop offset="1" stop-color="#0784c4"/></linearGradient></defs>
+<rect x="2" y="2" width="196" height="52" rx="8" fill="#f4f7fb" stroke="#4e5f74" stroke-width="2"/>
+<text x="12" y="19" font-family="Menlo, Consolas, 'Courier New', monospace" font-size="11" font-weight="700" fill="#16202d">loading cuteness...</text>
+<rect x="12" y="26" width="176" height="20" rx="4" fill="#ffffff" stroke="#8796a8" stroke-width="1.4"/>
+<g fill="url(#g)"><rect x="16" y="30" width="12" height="12" rx="2"/><rect x="31" y="30" width="12" height="12" rx="2"/><rect x="46" y="30" width="12" height="12" rx="2"/><rect x="61" y="30" width="12" height="12" rx="2"/><rect x="76" y="30" width="12" height="12" rx="2"/><rect x="91" y="30" width="12" height="12" rx="2"/><rect x="106" y="30" width="12" height="12" rx="2"/></g>
+<text x="186" y="19" text-anchor="end" font-family="Menlo, Consolas, 'Courier New', monospace" font-size="11" font-weight="700" fill="#c2129f">63%</text></svg>
