@@ -16,6 +16,7 @@ from ..security import (
     clear_session_cookie,
     client_ip,
     get_current_user,
+    get_optional_user,
     hash_password,
     hash_token,
     public_user,
@@ -87,6 +88,12 @@ async def logout(response: Response) -> dict[str, bool]:
 @router.get("/me")
 async def me(user: dict = Depends(get_current_user)) -> dict[str, Any]:
     return public_user(user)
+
+
+@router.get("/session")
+async def session(user: dict | None = Depends(get_optional_user)) -> dict[str, Any]:
+    """Like /me, but a signed-out visitor is a normal answer (200 with null), not an error."""
+    return {"user": public_user(user) if user else None}
 
 
 @router.post("/forgot-password")

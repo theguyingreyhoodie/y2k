@@ -13,8 +13,13 @@ async def test_register_me_logout(make_client):
     me = await client.get("/api/auth/me")
     assert me.status_code == 200 and me.json()["id"] == user["id"]
 
+    session = await client.get("/api/auth/session")
+    assert session.status_code == 200 and session.json()["user"]["id"] == user["id"]
+
     assert (await client.post("/api/auth/logout")).status_code == 200
     assert (await client.get("/api/auth/me")).status_code == 401
+    signed_out = await client.get("/api/auth/session")
+    assert signed_out.status_code == 200 and signed_out.json() == {"user": None}
 
 
 async def test_duplicate_email_and_weak_password(make_client):
