@@ -16,3 +16,6 @@ frontend/dist/
 .env
 .env.local
 screenshots/
+
+# Impeccable review captures (regenerated on each review)
+.impeccable/review/

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T14:00:00+05:30",
+  "title": "Design System: Y2KEDIT",
+  "extensions": {
+    "colorMeta": {
+      "aqua": { "role": "primary", "displayName": "Frutiger Aqua", "canonical": "#13b4ea", "tonalRamp": ["#032a3c", "#05445f", "#075a8e", "#0a7bbd", "#13b4ea", "#5fd0f5", "#a7eeff", "#e2f5fe"] },
+      "cyber-pink": { "role": "secondary", "displayName": "Cyber Pink", "canonical": "#ff2ad2", "tonalRamp": ["#3a0330", "#6e0656", "#990a76", "#d4179f", "#ff2ad2", "#ff7fe6", "#ffb8ef", "#ffe9fa"] },
+      "caustic-lime": { "role": "tertiary", "displayName": "Caustic Lime", "canonical": "#39ff14", "tonalRamp": ["#0c3a04", "#146608", "#1f950c", "#2bc610", "#39ff14", "#7dff5f", "#bcffa9", "#eaffe4"] },
+      "glitter-gold": { "role": "tertiary", "displayName": "Glitter Gold", "canonical": "#ffd23f", "tonalRamp": ["#3d2c00", "#6b4d00", "#9a6f00", "#cc9600", "#ffd23f", "#ffe07a", "#ffedb3", "#fff9e6"] },
+      "sky-ground": { "role": "neutral", "displayName": "Sky Ground", "canonical": "#e2f5fe" },
+      "ink": { "role": "neutral", "displayName": "Night Navy Ink", "canonical": "#0a1424" },
+      "night-ground": { "role": "neutral", "displayName": "Cyber Night", "canonical": "#08070c" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing hero only; one word may be chrome lettering." },
+      "headline": { "displayName": "Headline", "purpose": "Page and section titles." },
+      "title": { "displayName": "Window title", "purpose": "Program window title bars and button labels." },
+      "body": { "displayName": "Body", "purpose": "Copy and descriptions." },
+      "label": { "displayName": "Label", "purpose": "Field, slider and preset labels." },
+      "value": { "displayName": "Value", "purpose": "Numbers only: slider readouts, sizes, keys." }
+    },
+    "shadows": [
+      { "name": "window", "value": "0 22px 44px -22px rgba(6,58,108,.5), 0 4px 14px -6px rgba(6,58,108,.28), inset 0 1px 0 rgba(255,255,255,.9)", "purpose": "Every program window." },
+      { "name": "jelly", "value": "inset 0 1px 0 rgba(255,255,255,.65), inset 0 -4px 8px rgba(0,0,0,.12), 0 8px 16px -8px rgba(10,123,189,.5)", "purpose": "Jelly pill buttons (glow tinted per variant)." },
+      { "name": "stage", "value": "0 18px 40px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.1)", "purpose": "The photo on the editor stage." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "All state transitions and the reel's scan-in." },
+      { "name": "scan-in", "value": "clip-path inset(0 0 100% 0) → inset(0) over 820ms", "purpose": "The one authored moment: a new look scans in like a CRT refresh." },
+      { "name": "float", "value": "translateY 0 → -18px, 9s ease-in-out infinite", "purpose": "Bubbles and the sticker wall." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "640px" },
+      { "name": "nav-compact", "value": "720px" },
+      { "name": "landing-stack", "value": "960px" },
+      { "name": "editor-desktop", "value": "1181px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Aqua jelly pill for the main action on a screen.",
+      "html": "<button class=\"ds-btn ds-btn-aqua\">Start editing, free</button>",
+      "css": ".ds-btn { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; font: 600 13px/1 Unbounded, system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.38); cursor: pointer; transition: transform 160ms cubic-bezier(.16,1,.3,1), filter 160ms; } .ds-btn::before { content: ''; position: absolute; z-index: -1; inset: 2px 8px auto; height: 40%; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.04)); } .ds-btn-aqua { border: 1px solid #044a75; background: linear-gradient(180deg, #8adfff 0%, #0a7bbd 52%, #075a8e 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -4px 8px rgba(0,0,0,.12), 0 8px 16px -8px rgba(10,123,189,.5); } .ds-btn:hover { filter: brightness(1.06) saturate(1.06); transform: translateY(-1px); } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ff2ad2; }"
+    },
+    {
+      "name": "Pink Button",
+      "kind": "button",
+      "refersTo": "button-pink",
+      "description": "Pink jelly pill for creative actions (add text, add sticker).",
+      "html": "<button class=\"ds-btn-pink\">Add text</button>",
+      "css": ".ds-btn-pink { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid #6e0656; background: linear-gradient(180deg, #ff9eea 0%, #d4179f 52%, #990a76 100%); color: #fff; font: 600 13px/1 Unbounded, system-ui, sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,.38); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 8px 16px -8px rgba(255,42,210,.5); cursor: pointer; transition: transform 160ms cubic-bezier(.16,1,.3,1); } .ds-btn-pink:hover { transform: translateY(-1px); filter: brightness(1.06); } .ds-btn-pink:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ff2ad2; }"
+    },
+    {
+      "name": "Chrome Button",
+      "kind": "button",
+      "refersTo": "button-chrome",
+      "description": "Neutral chrome pill (save, cancel, upload).",
+      "html": "<button class=\"ds-btn-chrome\">Save</button>",
+      "css": ".ds-btn-chrome { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid #6f8197; background: linear-gradient(180deg, #ffffff 0%, #e3eaf2 52%, #a9b8c9 100%); color: #0b1626; font: 600 13px/1 Unbounded, system-ui, sans-serif; text-shadow: 0 1px 0 rgba(255,255,255,.8); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 8px 16px -8px rgba(70,100,140,.4); cursor: pointer; } .ds-btn-chrome:hover { transform: translateY(-1px); } .ds-btn-chrome:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ff2ad2; }"
+    },
+    {
+      "name": "Program Window",
+      "kind": "card",
+      "description": "The signature container: glossy title bar with a filename, jelly lights, body, status bar.",
+      "html": "<section class=\"ds-window\"><div class=\"ds-window-bar\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\"><path d=\"M12 1.8l2.9 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.3 5.7 21l1.6-7.1L1.9 9.1l7.2-.7z\" fill=\"#ff2ad2\"/></svg><span>presets.exe</span><i></i><i></i><i></i></div><div class=\"ds-window-body\">Window body</div><div class=\"ds-window-status\"><span>1000 × 1500 px</span></div></section>",
+      "css": ".ds-window { width: 280px; background: #fff; border: 1px solid rgba(40,96,148,.5); border-radius: 12px; overflow: hidden; box-shadow: 0 22px 44px -22px rgba(6,58,108,.5), 0 4px 14px -6px rgba(6,58,108,.28), inset 0 1px 0 rgba(255,255,255,.9); font-family: Chivo, system-ui, sans-serif; } .ds-window-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 8px 0 10px; background: linear-gradient(180deg, #ecfcff 0%, #b3eeff 45%, #74d8fa 50%, #4fc7f2 100%); color: #03233a; font: 600 11.5px Unbounded, system-ui, sans-serif; text-shadow: 0 1px 0 rgba(255,255,255,.75); } .ds-window-bar span { flex: 1; } .ds-window-bar i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0,0,0,.28); background: linear-gradient(180deg, #ffd2f5, #ff2ad2); } .ds-window-bar i:nth-of-type(2) { background: linear-gradient(180deg, #fff2b8, #ffb400); } .ds-window-bar i:nth-of-type(3) { background: linear-gradient(180deg, #dcffd0, #2fcf45); } .ds-window-body { padding: 14px; color: #0a1424; } .ds-window-status { padding: 4px 12px; border-top: 1px solid #c5d4e3; background: #f1f7fc; color: #536479; font: 500 12px 'IBM Plex Mono', monospace; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Inset field with a pink focus glow.",
+      "html": "<input class=\"ds-input\" placeholder=\"you@example.com\" />",
+      "css": ".ds-input { width: 260px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #9bb0c6; background: #f1f7fc; color: #0a1424; font: 400 16px Chivo, system-ui, sans-serif; box-shadow: inset 0 2px 4px rgba(10,40,80,.06); transition: border-color 140ms, box-shadow 140ms; } .ds-input::placeholder { color: #536479; } .ds-input:focus { outline: none; border-color: #ff2ad2; box-shadow: 0 0 0 3px rgba(255,42,210,.2); }"
+    },
+    {
+      "name": "Choice Chip",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Text style / font picker; selected becomes pink jelly.",
+      "html": "<button class=\"ds-chip\">Holo</button><button class=\"ds-chip ds-chip-on\">Chrome</button>",
+      "css": ".ds-chip { height: 32px; padding: 0 10px; margin-right: 6px; border-radius: 9px; border: 1px solid #9bb0c6; background: #f1f7fc; color: #0a1424; font: 700 12px Chivo, system-ui, sans-serif; cursor: pointer; } .ds-chip:hover { border-color: #ff2ad2; } .ds-chip-on { border-color: #990a76; background: linear-gradient(180deg, #ff9eea, #d4179f 55%, #990a76); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.25); }"
+    },
+    {
+      "name": "Segmented Tabs",
+      "kind": "nav",
+      "description": "Pill track with a glossy active segment (filter groups, mobile editor tabs).",
+      "html": "<div class=\"ds-seg\"><button aria-selected=\"true\">Adjust</button><button>Effects</button><button>Duotone</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; border: 1px solid #c5d4e3; background: #e4eef7; } .ds-seg button { height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #33445c; font: 800 12.5px Chivo, system-ui, sans-serif; cursor: pointer; } .ds-seg button[aria-selected='true'] { background: linear-gradient(180deg, #8adfff, #0a7bbd 52%, #075a8e); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.25); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The 2003 Desktop",
+    "overview": "Y2KEDIT looks like a desktop from the Frutiger Aero years: pale aqua sky, glossy jelly buttons, and little program windows titled like files (presets.exe, filters.dll, stickers.zip). The edit is the one bright, saturated thing on screen; everything around it is glass, chrome and sky. In dark mode the same desktop goes cyber at night: near-black ground, magenta-to-maroon title bars and pink glow. The editor is a working tool first. The world lends it type, palette, window chrome and one signature move (preset tiles render your own photo); the controls themselves are ordinary sliders, tabs and buttons.",
+    "keyCharacteristics": [
+      "Program windows with glossy title bars and filename titles frame every panel, dialog and card.",
+      "Jelly pill buttons: aqua for the main action, pink for creative actions, chrome for neutral ones.",
+      "Cyber pink marks selection and \"this is active\" everywhere.",
+      "Unbounded's wide black weight for display; Chivo for reading; IBM Plex Mono only for numbers.",
+      "Light follows the system setting; dark is a full theme, not an inversion."
+    ],
+    "rules": [
+      { "name": "The One Bright Thing Rule", "body": "The photo on the stage is the most saturated object on screen. Interface chrome stays glassy and pale so it never competes with the edit.", "section": "colors" },
+      { "name": "The Pink Means Picked Rule", "body": "Cyber pink is reserved for selection, active state and focus. Don't use it as decoration in working screens.", "section": "colors" },
+      { "name": "The Numbers-Only Mono Rule", "body": "Monospace appears only where the content is a measurement or a key: slider values, pixel sizes, share URLs, kbd. Never as a \"techy\" costume for labels.", "section": "typography" },
+      { "name": "The Soft Glass Rule", "body": "Shadows always have offset and blur. No zero-blur offset shadows; this world is glass, not neobrutalism.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put every panel, dialog and card in a program window with a filename title (share.exe, readme.txt).",
+      "Do keep white labels only on the deepened jelly colours (#0a7bbd, #d4179f), so they pass 4.5:1.",
+      "Do draw icons from Lucide or as authored SVG; stickers are authored SVG or PNG assets.",
+      "Do keep the photo the most saturated thing on the editor screen.",
+      "Do respect prefers-reduced-motion: bubbles, marquee and the scan-in reel all settle."
+    ],
+    "donts": [
+      "Don't use kicker or eyebrow labels above headings, or numbered section labels.",
+      "Don't use zero-blur offset shadows.",
+      "Don't use emoji or Unicode glyphs as icons; ★ is only a typographic separator or list marker.",
+      "Don't set gradient text in the interface. The one sanctioned use is the owner-pinned chrome lettering (a single hero word, and the editor's own text-overlay styles).",
+      "Don't use monospace for labels or prose."
+    ]
+  }
+}
