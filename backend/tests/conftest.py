@@ -1,6 +1,8 @@
 import io
 import os
 
+# Tests always use a local MongoDB, never the cluster in backend/.env (set before the app loads .env).
+os.environ["MONGO_URL"] = os.environ.get("TEST_MONGO_URL", "mongodb://127.0.0.1:27017")
 os.environ["DB_NAME"] = "y2kedit_test"
 os.environ["JWT_SECRET"] = "test-secret-not-for-production-0123456789"
 os.environ["ADMIN_EMAILS"] = "admin@y2kedit.dev"
