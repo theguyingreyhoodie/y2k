@@ -10,12 +10,12 @@ No AI: every look is plain canvas maths running in your browser, and your photo 
 
 ## Features
 
-- **13 presets** that each set filters, a layout and their own stickers or text: Original, Icon Twin, Downtown, Sacred Mono, Pixel Pop, Advisory, Grunge B&W, Is this Illegal?, Frutiger Aero, Cybercore, Glitter Bling, Lomo / Disposable, Chrome. Every preset tile is rendered from *your* photo.
-- **Layouts:** Single, Mirror Twin and Pixel Twin; rotate and flip the source photo.
-- **13 adjustments:** brightness, contrast, saturation, hue, sepia, grayscale, blur, pixelate, dreamy glow, film grain, vignette, RGB split, scanlines, plus six duotones.
-- **22 built-in stickers**, and your own uploads: the server cuts out white backgrounds (flood-filled from the edges, so white details inside the sticker survive). Admin accounts' stickers are shared with everyone.
-- **Text layers** in 8 styles (chrome, holo, neon, bubble, horror, datestamp, white, black) and 5 fonts.
-- **Undo / redo** and keyboard shortcuts (`⌘Z`, `⇧⌘Z`, `⌘S`, `⌘D`, `⌫`, arrows, `[ ]`, `T`, `?`).
+- **29 presets** that each set filters, a layout and their own stickers or text. Sixteen are modelled on icon-edit pins: Old iPhone, Midnight, Night Flash, Night Blur, Washed Out, Noir Twin, Ember, Camcorder, Golden Grain, Under Arrest, Swag, Whatever, Star Girl, Scrapbook, Hotter than Hell, Soft Advisory. The originals are still there: Original, Icon Twin, Downtown, Sacred Mono, Pixel Pop, Advisory, Grunge B&W, Is this Illegal?, Frutiger Aero, Cybercore, Glitter Bling, Lomo / Disposable, Chrome. Every preset tile is rendered from *your* photo.
+- **Layouts:** Single, Twin, Mirror and Pixel Twin. Two-photo layouts start in a 1:1 frame (or pick Fit, 4:5 or 3:4). **Arrange** mode lets you drag each photo inside its panel, zoom it with the wheel or a pinch, and drag the divider anywhere from 25% to 75%; you can also swap sides and join the panels with a cut, a thin line or a soft fade. Rotate and flip the source photo.
+- **17 adjustments:** brightness, contrast, saturation, hue, warmth, tint, fade, sepia, grayscale, blur, pixelate, soft focus, dreamy glow, film grain, vignette, RGB split, scanlines, plus six split tones (Retro, Ember, Cinema, Midnight, Rose, Olive) and six duotones.
+- **55 built-in stickers** in six groups (faces and props like a moustache, nerd glasses and dog ears; stars; exclamations and marks; gothic crosses and advisory labels; flowers and butterflies; Y2K tech), and your own uploads: the server cuts out white backgrounds (flood-filled from the edges, so white details inside the sticker survive). Admin accounts' stickers are shared with everyone.
+- **Text layers** in 15 styles (chrome, holo, neon, bubble, horror, datestamp, white, black, meme caption, glitter, VHS, echo, tooltip, chat bubble, speech bubble) and 9 fonts.
+- **Undo / redo** and keyboard shortcuts (`⌘Z`, `⇧⌘Z`, `⌘S`, `⌘D`, `⌫`, arrows, `[ ]`, `T`, `A`, `?`).
 - **Touch gestures:** drag, pinch to resize and twist to rotate on phones; trackpad pinch on desktop.
 - **Lossless re-edit:** saved edits keep the original photo and every layer, not just the flattened PNG.
 - **Gallery:** re-edit, rename, download, share (public link plus Pinterest, X and Tumblr), delete.

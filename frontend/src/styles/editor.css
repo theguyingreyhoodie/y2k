@@ -163,7 +163,7 @@
 /* ---------- layout.cfg ---------- */
 .layouts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   padding: 10px;
 }
@@ -202,6 +202,42 @@
   color: var(--pink-ink);
   box-shadow: 0 0 0 1px var(--pink);
 }
+.layout__glyph .layout__mark {
+  fill: var(--ink-2);
+  stroke: none;
+}
+.compose {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 2px 0 0;
+  padding: 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.compose:disabled { opacity: 0.5; }
+.compose__row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.compose__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.seg--sm > button {
+  height: 26px;
+  padding: 0 6px;
+  font-size: 12px;
+}
+.compose__swap,
+.compose__arrange { justify-self: start; }
+.compose__swap[aria-pressed="true"] { border-color: var(--pink); }
+.filters__heading { margin: 2px 0 -4px; }
+.stickers__group .panel-heading { margin-bottom: 4px; }
 
 /* ---------- canvas.exe ---------- */
 .canvas-window__body {
@@ -399,6 +435,94 @@
   color: var(--pink-ink);
 }
 
+/* ---------- Arrange mode ---------- */
+.arrange {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.arrange--grabbing { cursor: grabbing; }
+.arrange__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  outline: 1.5px dashed rgba(255, 255, 255, 0.75);
+  outline-offset: -1.5px;
+  pointer-events: none;
+}
+.arrange__panel--active {
+  outline: 2px solid var(--pink);
+  outline-offset: -2px;
+}
+.arrange__tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(10, 8, 16, 0.72);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+.arrange__panel--active .arrange__tag { background: var(--pink); }
+.arrange__seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  cursor: ew-resize;
+  z-index: 1;
+}
+.arrange__seam::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.arrange__grip {
+  position: relative;
+  width: 16px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background:
+    linear-gradient(90deg, transparent 5px, rgba(0, 0, 0, 0.28) 5px 6px, transparent 6px 9px, rgba(0, 0, 0, 0.28) 9px 10px, transparent 10px) center / 100% 18px no-repeat,
+    #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 140ms var(--ease-out);
+}
+.arrange__seam:hover .arrange__grip,
+.arrange--grabbing .arrange__seam .arrange__grip { transform: scale(1.08); }
+.arrange__seam:focus-visible { outline: none; }
+.arrange__seam:focus-visible .arrange__grip { box-shadow: var(--ring), 0 2px 8px rgba(0, 0, 0, 0.4); }
+.toolbar__slots { flex: 0 0 auto; }
+.toolbar__zoom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  max-width: 260px;
+  color: var(--ink-2);
+}
+.toolbar__zoom-value {
+  min-width: 34px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
 /* ---------- stickers.zip ---------- */
 .stickers {
   display: grid;
@@ -430,6 +554,8 @@
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
+.sticker-btn--dark { background: #2a2631; }
+.sticker-btn--light { background: #f3f0f6; }
 .sticker-btn:hover:not(:disabled) {
   transform: translateY(-2px) rotate(-4deg);
   border-color: var(--pink);

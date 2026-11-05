@@ -1,5 +1,5 @@
-import { DEFAULT_FILTERS } from "./defaults";
-import type { EditorDoc, Filters, FontId, LayoutId, Overlay, TextStyleId } from "./types";
+import { DEFAULT_COMPOSE, DEFAULT_FILTERS } from "./defaults";
+import type { Composition, EditorDoc, Filters, FontId, LayoutId, Overlay, TextStyleId } from "./types";
 
 interface AutoSticker {
   ref: string;
@@ -7,6 +7,7 @@ interface AutoSticker {
   y: number;
   size: number;
   rotation?: number;
+  opacity?: number;
 }
 
 interface AutoText {
@@ -24,6 +25,8 @@ export interface Preset {
   label: string;
   filters: Partial<Filters>;
   layout: LayoutId;
+  /** Split, seam and side. Frame and photo positions are the user's, so presets leave them alone. */
+  compose?: Partial<Pick<Composition, "split" | "swap" | "seam">>;
   stickers?: AutoSticker[];
   texts?: AutoText[];
 }
@@ -35,6 +38,15 @@ function datestamp(): string {
   return `'03 ${pad(now.getMonth() + 1)} ${pad(now.getDate())}`;
 }
 
+/** Camcorder on-screen display: the time now, today's date in 1997 and the weekday it fell on that year. */
+function camcorderStamp(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const then = new Date(1997, now.getMonth(), now.getDate());
+  const day = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][then.getDay()];
+  return `${pad(now.getHours())}:${pad(now.getMinutes())}\n${pad(then.getDate())}.${pad(then.getMonth() + 1)}.1997 ${day}`;
+}
+
 export const PRESETS: Preset[] = [
   { id: "none", label: "Original", filters: {}, layout: "single" },
   {
@@ -44,6 +56,158 @@ export const PRESETS: Preset[] = [
     layout: "pixel_twin",
     stickers: [{ ref: "builtin:star_chrome", x: 0.5, y: 0.5, size: 0.2 }],
   },
+  // ---- Looks from the icon-edit board: pixel twins, old phone filters, night and grunge ----
+  {
+    id: "old_iphone",
+    label: "Old iPhone",
+    filters: { brightness: 104, contrast: 122, saturation: 88, warmth: 34, splitTone: "retro", splitAmount: 62, vignette: 58, soften: 22, grain: 10 },
+    layout: "single",
+  },
+  {
+    id: "midnight",
+    label: "Midnight",
+    filters: { brightness: 80, contrast: 132, saturation: 62, warmth: -6, splitTone: "midnight", splitAmount: 55, vignette: 46, grain: 16, pixelate: 26 },
+    layout: "pixel_twin",
+    compose: { split: 0.6, swap: true },
+    stickers: [{ ref: "builtin:thorn_sigil", x: 0.4, y: 0.3, size: 0.3 }],
+  },
+  {
+    id: "night_flash",
+    label: "Night Flash",
+    filters: { brightness: 92, contrast: 140, saturation: 90, warmth: 8, vignette: 70, grain: 10, pixelate: 14 },
+    layout: "pixel_twin",
+    compose: { split: 0.62, seam: "line" },
+  },
+  {
+    id: "night_blur",
+    label: "Night Blur",
+    filters: { brightness: 92, contrast: 108, saturation: 70, soften: 60, glow: 26, blur: 1.5, splitTone: "rose", splitAmount: 40, grain: 18, pixelate: 22 },
+    layout: "pixel_twin",
+    compose: { split: 0.68 },
+    stickers: [
+      { ref: "builtin:lace_strip", x: 0.68, y: 0.5, size: 1.02, opacity: 0.65 },
+      { ref: "builtin:focus_box", x: 0.4, y: 0.42, size: 0.15 },
+    ],
+    texts: [{ text: "#SWAG", font: "poster", style: "glitter", x: 0.19, y: 0.89, size: 0.12 }],
+  },
+  {
+    id: "washed",
+    label: "Washed Out",
+    filters: { brightness: 108, contrast: 84, saturation: 72, fade: 70, warmth: 6, soften: 30, glow: 10, pixelate: 24 },
+    layout: "pixel_twin",
+    compose: { split: 0.62, seam: "fade" },
+    stickers: [{ ref: "builtin:grey_stars", x: 0.5, y: 0.2, size: 0.24 }],
+  },
+  {
+    id: "noir_twin",
+    label: "Noir Twin",
+    filters: { grayscale: 100, contrast: 145, brightness: 90, grain: 20, vignette: 34, pixelate: 22 },
+    layout: "pixel_twin",
+    compose: { split: 0.64 },
+  },
+  {
+    id: "ember",
+    label: "Ember",
+    filters: { brightness: 96, contrast: 134, saturation: 112, warmth: 34, splitTone: "ember", splitAmount: 75, vignette: 64, glow: 8, pixelate: 28 },
+    layout: "pixel_twin",
+    compose: { split: 0.62 },
+    stickers: [{ ref: "builtin:cross_ornate", x: 0.62, y: 0.62, size: 0.3 }],
+  },
+  {
+    id: "camcorder",
+    label: "Camcorder",
+    filters: { warmth: 14, tint: 22, contrast: 116, saturation: 108, rgbSplit: 3, scanlines: 32, soften: 18, grain: 14, pixelate: 24 },
+    layout: "pixel_twin",
+    texts: [
+      { text: "CAMERA1\nPLAY\n00:02:20", font: "vcr", style: "vhs", x: 0.1, y: 0.13, size: 0.058 },
+      { text: camcorderStamp, font: "vcr", style: "vhs", x: 0.24, y: 0.9, size: 0.058 },
+      { text: "are you real?", font: "plain", style: "echo", x: 0.76, y: 0.82, size: 0.042 },
+    ],
+    stickers: [{ ref: "builtin:star_eyes", x: 0.5, y: 0.76, size: 0.16 }],
+  },
+  {
+    id: "golden_grain",
+    label: "Golden Grain",
+    filters: { brightness: 94, contrast: 122, saturation: 84, warmth: 42, fade: 6, splitTone: "ember", splitAmount: 25, grain: 48, vignette: 44 },
+    layout: "twin",
+    compose: { split: 0.54 },
+    stickers: [
+      { ref: "builtin:i_heart_me", x: 0.38, y: 0.82, size: 0.26 },
+      { ref: "builtin:cracked_glass", x: 0.74, y: 0.55, size: 0.3, opacity: 0.9 },
+    ],
+  },
+  {
+    id: "under_arrest",
+    label: "Under Arrest",
+    filters: { warmth: 26, tint: 4, fade: 14, contrast: 108, saturation: 82, vignette: 36, soften: 12 },
+    layout: "twin",
+    compose: { split: 0.64 },
+    stickers: [{ ref: "builtin:exclaim_hearts", x: 0.5, y: 0.17, size: 0.2 }],
+    texts: [{ text: "you're under arrest", font: "serif", style: "caption", x: 0.52, y: 0.86, size: 0.085 }],
+  },
+  {
+    id: "swag",
+    label: "Swag",
+    filters: { warmth: 12, contrast: 112, saturation: 92, fade: 12, pixelate: 30 },
+    layout: "pixel_twin",
+    compose: { split: 0.58, swap: true },
+    texts: [
+      { text: "#SWAG", font: "poster", style: "black", x: 0.2, y: 0.88, size: 0.12 },
+      { text: "Like damn", font: "plain", style: "chat", x: 0.46, y: 0.7, size: 0.042 },
+    ],
+  },
+  {
+    id: "whatever",
+    label: "Whatever",
+    filters: { warmth: 18, fade: 12, contrast: 108, saturation: 80, vignette: 30, soften: 14, pixelate: 26 },
+    layout: "pixel_twin",
+    compose: { split: 0.62 },
+    stickers: [
+      { ref: "builtin:exclaim_bold", x: 0.5, y: 0.12, size: 0.14 },
+      { ref: "builtin:pixel_skull", x: 0.64, y: 0.5, size: 0.15 },
+    ],
+    texts: [{ text: "whatever", font: "plain", style: "tooltip", x: 0.38, y: 0.8, size: 0.05 }],
+  },
+  {
+    id: "star_girl",
+    label: "Star Girl",
+    filters: { brightness: 108, contrast: 106, saturation: 86, warmth: -10, fade: 8, glow: 10, pixelate: 22 },
+    layout: "pixel_twin",
+    compose: { split: 0.66, swap: true },
+    stickers: [
+      { ref: "builtin:star_trail", x: 0.32, y: 0.3, size: 0.52 },
+      { ref: "builtin:cartoon_face", x: 0.88, y: 0.17, size: 0.2 },
+      { ref: "builtin:cross_outline", x: 0.13, y: 0.82, size: 0.24 },
+    ],
+  },
+  {
+    id: "scrapbook",
+    label: "Scrapbook",
+    filters: { grayscale: 85, brightness: 112, contrast: 124, fade: 8, grain: 12, pixelate: 20 },
+    layout: "pixel_twin",
+    compose: { split: 0.6, seam: "fade" },
+    stickers: [
+      { ref: "builtin:doodle_stars", x: 0.56, y: 0.2, size: 0.26 },
+      { ref: "builtin:shock_lines", x: 0.08, y: 0.18, size: 0.13 },
+    ],
+  },
+  {
+    id: "hotter_than_hell",
+    label: "Hotter than Hell",
+    filters: { brightness: 74, contrast: 128, saturation: 40, tint: -18, warmth: -4, grain: 34, blur: 1, vignette: 54 },
+    layout: "twin",
+    stickers: [{ ref: "builtin:parental_advisory", x: 0.5, y: 0.72, size: 0.13 }],
+    texts: [{ text: "hotter than hell", font: "gothic", style: "horror", x: 0.2, y: 0.08, size: 0.055 }],
+  },
+  {
+    id: "soft_advisory",
+    label: "Soft Advisory",
+    filters: { brightness: 106, contrast: 112, saturation: 58, warmth: 4, tint: 6, fade: 8, soften: 40, glow: 22, vignette: 20 },
+    layout: "twin",
+    compose: { seam: "line" },
+    stickers: [{ ref: "builtin:advisory_warped", x: 0.5, y: 0.8, size: 0.17 }],
+  },
+  // ---- The original set ----
   {
     id: "downtown",
     label: "Downtown",
@@ -138,6 +302,20 @@ export function overlayId(): string {
   return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `o${Date.now()}${counter}`;
 }
 
+/**
+ * Changes the layout. Going from one photo to two with the "Fit" frame would make a very wide image, so the
+ * frame switches to 1:1; it's marked automatic and switches back if the layout returns to Single.
+ */
+export function withLayout(doc: EditorDoc, layout: LayoutId): EditorDoc {
+  let compose = doc.compose;
+  if (doc.layout === "single" && layout !== "single" && compose.frame === "photo") {
+    compose = { ...compose, frame: "square", autoFrame: true };
+  } else if (layout === "single" && compose.autoFrame) {
+    compose = { ...compose, frame: "photo", autoFrame: false };
+  }
+  return { ...doc, layout, compose };
+}
+
 /** Swap in a preset's look. User-added layers survive; the previous preset's own layers are replaced. */
 export function applyPreset(doc: EditorDoc, preset: Preset): EditorDoc {
   const kept = doc.overlays.filter((o) => !o.auto);
@@ -150,7 +328,7 @@ export function applyPreset(doc: EditorDoc, preset: Preset): EditorDoc {
       y: s.y,
       size: s.size,
       rotation: s.rotation ?? 0,
-      opacity: 1,
+      opacity: s.opacity ?? 1,
       flipX: false,
       auto: true,
     })),
@@ -168,10 +346,12 @@ export function applyPreset(doc: EditorDoc, preset: Preset): EditorDoc {
       auto: true,
     })),
   ];
+  const laidOut = withLayout(doc, preset.layout);
+  const c = laidOut.compose;
   return {
-    ...doc,
+    ...laidOut,
     presetId: preset.id,
-    layout: preset.layout,
+    compose: { ...DEFAULT_COMPOSE, ...preset.compose, frame: c.frame, autoFrame: c.autoFrame, main: c.main, twin: c.twin },
     filters: { ...DEFAULT_FILTERS, ...preset.filters },
     overlays: [...kept, ...added],
   };
