@@ -8,7 +8,7 @@ No AI: every look is plain canvas maths running in your browser, and your photo 
 
 ![The editor with the Icon Twin look: the photo beside a pixelated twin, with the Pixelation meter under the canvas. Presets on the left are rendered from your own photo](docs/editor.jpg)
 
-![The gallery: saved edits with re-edit, download, share and delete](docs/gallery.jpg)
+![The gallery: seven saved edits, each a different photo in a different look (Icon Twin, Star Girl, Noir Twin, Old iPhone, Midnight, Golden Grain, Frutiger Aero), with re-edit, download, share and delete](docs/gallery.jpg)
 
 ## Features
 
@@ -122,7 +122,7 @@ This is a ground-up rewrite of the Emergent-generated version. The original coul
 
 ## Credits
 
-- Sample portrait (the in-app "Use the sample" photo): Unsplash photo [`photo-1581841064838-a470c740e8ee`](https://images.unsplash.com/photo-1581841064838-a470c740e8ee), Unsplash License. The screenshots in this README use a different photo.
+- Sample portrait (the in-app "Use the sample" photo): Unsplash photo [`photo-1581841064838-a470c740e8ee`](https://images.unsplash.com/photo-1581841064838-a470c740e8ee), Unsplash License. The screenshots in this README use other photos.
 - Fonts from Google Fonts: Unbounded, Chivo, IBM Plex Mono, Press Start 2P, UnifrakturCook, Tinos, Anton, VT323.
 - Icons: [Lucide](https://lucide.dev).
 - The chrome rockstar, halftone star, dot stars, parental advisory and pixel cursor stickers come from the original Y2KEDIT build; the other 50 stickers were drawn for this version.
