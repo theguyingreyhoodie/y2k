@@ -22,7 +22,7 @@ import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, downloadBlob, errorMessage, fetchBlob, type CustomSticker, type Edit } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { DEFAULT_CROP, DEFAULT_FILTERS, EXPORT_MAX_SIDE, LAYOUTS, ZOOM_MAX, hasBlur, newDoc } from "@/editor/defaults";
+import { DEFAULT_CROP, DEFAULT_FILTERS, EXPORT_MAX_SIDE, LAYOUTS, ZOOM_MAX, newDoc, pixelSize } from "@/editor/defaults";
 import { ensureFonts, fontsIn } from "@/editor/fonts";
 import { useHistory } from "@/editor/history";
 import { normalizeDoc } from "@/editor/normalize";
@@ -32,7 +32,7 @@ import { checkFile, loadSample, sourceFromBlob, type Source } from "@/editor/sou
 import { loadImage, registerCustomSticker, stickerUrl } from "@/editor/stickers";
 import type { Composition, EditorDoc, Filters, LayoutId, Overlay, PanelSlot } from "@/editor/types";
 import { AdjustPanel, LayoutPanel } from "@/editor/components/AdjustPanel";
-import { BlurMeter } from "@/editor/components/BlurMeter";
+import { PixelMeter } from "@/editor/components/PixelMeter";
 import { LayerPanel } from "@/editor/components/LayerPanel";
 import { PresetPanel } from "@/editor/components/PresetPanel";
 import { Stage, type ArrangeControls } from "@/editor/components/Stage";
@@ -470,6 +470,9 @@ export default function Editor() {
   // ---------- Render ----------
   const comp = source ? compositionSize(source.canvas, doc, EXPORT_MAX_SIDE) : null;
   const layoutLabel = LAYOUTS.find((l) => l.id === doc.layout)?.label ?? "";
+  // Pixel block size on screen, and the one the current look started with (for the meter's reset).
+  const pixels = pixelSize(doc.layout, doc.filters);
+  const lookPixels = pixelSize(doc.layout, { pixelate: (doc.presetId && PRESET_BY_ID.get(doc.presetId)?.filters.pixelate) || 0 });
   const filtersTouched = useMemo(
     () => (Object.keys(DEFAULT_FILTERS) as (keyof Filters)[]).some((k) => doc.filters[k] !== DEFAULT_FILTERS[k]),
     [doc.filters],
@@ -562,8 +565,14 @@ export default function Editor() {
                     ? `${comp.width} × ${comp.height} px · ${layoutLabel} · ${doc.overlays.length} ${doc.overlays.length === 1 ? "layer" : "layers"}`
                     : "No photo yet"}
               </span>
-              {source && !arranging && hasBlur(doc.filters) ? (
-                <BlurMeter value={doc.filters.blurScale} onChange={(v) => setFilter({ blurScale: v })} onCommit={history.commit} />
+              {source && !arranging && pixels > 0 ? (
+                <PixelMeter
+                  value={pixels}
+                  lookValue={lookPixels}
+                  twin={doc.layout === "pixel_twin"}
+                  onChange={(v) => setFilter({ pixelate: v })}
+                  onCommit={history.commit}
+                />
               ) : null}
               <button type="button" className="status-btn" onClick={() => setShowKeys(true)}>
                 <Keyboard size={13} aria-hidden="true" />

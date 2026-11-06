@@ -25,13 +25,20 @@ function loadSampleImage(): Promise<HTMLImageElement> {
   return samplePromise;
 }
 
-/** The sample cropped to 4:5 around the face, as a canvas the renderer can use. */
+/**
+ * The sample cropped to 4:5 as a canvas the renderer can use: the widest 4:5 slice of the photo, centred
+ * across and starting 7% down, which keeps the face in frame. Works for a sample of any shape.
+ */
 async function heroSource(): Promise<HTMLCanvasElement> {
   const img = await loadSampleImage();
-  const w = img.naturalWidth;
+  const iw = img.naturalWidth;
+  const ih = img.naturalHeight;
+  const w = Math.min(iw, Math.floor(ih * 0.8));
   const h = Math.round(w * 1.25);
+  const sx = Math.round((iw - w) / 2);
+  const sy = Math.max(0, Math.min(ih - h, Math.round(ih * 0.07)));
   const c = makeCanvas(w, h, true);
-  c.getContext("2d")!.drawImage(img, 0, -Math.round(img.naturalHeight * 0.07));
+  c.getContext("2d")!.drawImage(img, sx, sy, w, h, 0, 0, w, h);
   return c;
 }
 

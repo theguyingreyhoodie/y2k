@@ -448,15 +448,16 @@
   color: var(--pink-ink);
 }
 
-/* ---------- Blur meter: in the canvas status bar while the look has blur in it ---------- */
+/* ---------- Pixelation meter: in the canvas status bar whenever something is pixelated ---------- */
 .canvas-window .window__status {
-  min-height: 36px; /* tall enough for the meter, so the stage doesn't jump when it appears */
+  min-height: 36px; /* tall enough for the meter, so the stage doesn't jump when it appears on a wide canvas */
   flex-wrap: wrap;
   row-gap: 4px;
+  container-type: inline-size;
 }
 /* The size line gives way first, so Shortcuts keeps its place beside it on a phone. */
 .canvas-window .window__status > .tabular { flex: 1 1 0; min-width: 0; }
-.blur-meter {
+.pixel-meter {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -466,13 +467,13 @@
   border-radius: 999px;
   background: var(--surface);
 }
-.blur-meter__label {
+.pixel-meter__label {
   margin-right: 2px;
   color: var(--pink-ink);
   font-size: 12px;
   font-weight: 800;
 }
-.blur-meter__step {
+.pixel-meter__step {
   display: grid;
   place-items: center;
   width: 22px;
@@ -483,13 +484,13 @@
   background: none;
   color: var(--ink-2);
 }
-.blur-meter__step:hover:not(:disabled) {
+.pixel-meter__step:hover:not(:disabled) {
   background: var(--surface-3);
   color: var(--pink-ink);
 }
-.blur-meter__step:disabled { opacity: 0.35; }
-.blur-meter__range { width: 140px; height: 24px; }
-.blur-meter__value {
+.pixel-meter__step:disabled { opacity: 0.35; }
+.pixel-meter__range { width: 140px; height: 24px; }
+.pixel-meter__value {
   min-width: 38px;
   padding: 0 2px;
   border: 0;
@@ -500,11 +501,18 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-.blur-meter__value--reset {
+.pixel-meter__value--reset {
   border-radius: 4px;
   color: var(--pink-ink);
 }
-.blur-meter__value--reset:hover { text-decoration: underline; text-underline-offset: 2px; }
+.pixel-meter__value--reset:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* A narrower canvas (laptops, phones) gives the meter its own full-width row under the size line, so
+   neither gets squeezed and the track stays easy to drag with a thumb. */
+@container (max-width: 720px) {
+  .pixel-meter { order: 3; flex: 1 1 100%; margin-left: 0; }
+  .pixel-meter__range { flex: 1; width: auto; }
+}
 
 /* ---------- Arrange mode ---------- */
 .arrange {
@@ -817,9 +825,6 @@ kbd {
 }
 @media (max-width: 640px) {
   .presets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  /* Own row under the size line, as wide as the canvas, so the track is easy to drag with a thumb. */
-  .blur-meter { order: 3; flex: 1 1 100%; margin-left: 0; }
-  .blur-meter__range { flex: 1; width: auto; }
   .toolbar { gap: 4px; padding: 8px; }
   .toolbar__label,
   .toolbar__copy,
