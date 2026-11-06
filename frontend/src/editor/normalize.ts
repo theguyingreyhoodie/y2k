@@ -1,4 +1,4 @@
-import { DEFAULT_COMPOSE, DEFAULT_FILTERS, FONTS, FRAMES, SEAMS, SPLIT_MAX, SPLIT_MIN, TEXT_STYLES, ZOOM_MAX, newDoc } from "./defaults";
+import { BLUR_SCALE_MAX, DEFAULT_COMPOSE, DEFAULT_FILTERS, FONTS, FRAMES, SEAMS, SPLIT_MAX, SPLIT_MIN, TEXT_STYLES, ZOOM_MAX, newDoc } from "./defaults";
 import type { Crop, EditorDoc, Filters, FontId, FrameId, LayoutId, Overlay, Rotation, SeamId, TextStyleId } from "./types";
 
 const num = (v: unknown, fallback: number, min: number, max: number) =>
@@ -47,6 +47,7 @@ export function normalizeDoc(raw: unknown): EditorDoc {
     }
     else filters[key] = num(f[key], DEFAULT_FILTERS[key], -360, 360);
   }
+  filters.blurScale = num(f.blurScale, DEFAULT_FILTERS.blurScale, 0, BLUR_SCALE_MAX);
   doc.filters = filters;
 
   const overlays = Array.isArray(r.overlays) ? r.overlays : [];

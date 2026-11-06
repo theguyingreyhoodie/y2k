@@ -38,6 +38,7 @@ export interface Filters {
   sepia: number; // 0..100
   grayscale: number; // 0..100
   blur: number; // 0..20, px at a 1000px-tall reference
+  blurScale: number; // 0..200 %, turns every blur in the look down or up together (Blur, Soft focus blur, Glow blur); 100 = as set
   soften: number; // 0..100, soft-focus haze that keeps the detail underneath
   softenBlur: number; // 2..40, how far the soft-focus haze spreads: px at a 1000px-tall reference
   pixelate: number; // 0..60, block size at a 1000px-tall reference

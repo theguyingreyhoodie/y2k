@@ -11,6 +11,7 @@ export const DEFAULT_FILTERS: Filters = {
   sepia: 0,
   grayscale: 0,
   blur: 0,
+  blurScale: 100,
   soften: 0,
   softenBlur: 12,
   pixelate: 0,
@@ -50,8 +51,14 @@ export function newDoc(): EditorDoc {
   };
 }
 
+/** The look has some blur in it, so the Blur meter under the canvas has something to turn up or down. */
+export function hasBlur(f: Filters): boolean {
+  return f.blur > 0 || f.soften > 0 || f.glow > 0;
+}
+export const BLUR_SCALE_MAX = 200;
+
 export interface SliderSpec {
-  key: Exclude<keyof Filters, "duotone" | "splitTone">;
+  key: Exclude<keyof Filters, "duotone" | "splitTone" | "blurScale">;
   label: string;
   min: number;
   max: number;
