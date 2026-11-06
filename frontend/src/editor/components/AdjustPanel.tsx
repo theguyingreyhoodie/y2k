@@ -140,19 +140,27 @@ export function AdjustPanel({ doc, disabled, onFilter, onCommit, onResetFilters 
             />
           </>
         ) : (
-          sliders.map((s) => (
-            <Slider
-              key={s.key}
-              label={s.label}
-              value={f[s.key]}
-              min={s.min}
-              max={s.max}
-              unit={s.unit}
-              defaultValue={DEFAULT_FILTERS[s.key]}
-              onChange={(v) => onFilter({ [s.key]: v } as Partial<Filters>)}
-              onCommit={onCommit}
-            />
-          ))
+          sliders.map((s) => {
+            const parent = s.parent ? sliders.find((p) => p.key === s.parent) : undefined;
+            const off = parent !== undefined && f[parent.key] === 0;
+            return (
+              <Slider
+                key={s.key}
+                label={s.label}
+                value={f[s.key]}
+                min={s.min}
+                max={s.max}
+                step={s.step}
+                unit={s.unit}
+                defaultValue={DEFAULT_FILTERS[s.key]}
+                sub={parent !== undefined}
+                disabled={off}
+                hint={off ? `Turn up ${parent.label} to use this` : undefined}
+                onChange={(v) => onFilter({ [s.key]: v } as Partial<Filters>)}
+                onCommit={onCommit}
+              />
+            );
+          })
         )}
       </fieldset>
     </Window>

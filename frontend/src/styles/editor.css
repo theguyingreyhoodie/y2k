@@ -125,6 +125,19 @@
   border-radius: 4px;
 }
 .slider__value--reset:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* A setting of the effect above it: tucked in under a guide line so the pair reads as one control. */
+.slider--sub {
+  margin: -4px 0 0 4px;
+  padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.slider--sub .slider__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.slider[aria-disabled="true"] { opacity: 0.45; }
+.slider[aria-disabled="true"] .range { cursor: not-allowed; }
 
 .duotones {
   display: grid;

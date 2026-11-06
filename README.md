@@ -6,13 +6,15 @@ No AI: every look is plain canvas maths running in your browser, and your photo 
 
 ![Landing page with the live preset reel](docs/landing.jpg)
 
-![The editor: presets rendered from your own photo, the canvas, stickers and layer properties](docs/editor.jpg)
+![The editor with the Star Girl look: a pixelated twin, doodle stars and stickers. Presets on the left are rendered from your own photo](docs/editor.jpg)
+
+![The gallery: saved edits with re-edit, download, share and delete](docs/gallery.jpg)
 
 ## Features
 
 - **29 presets** that each set filters, a layout and their own stickers or text. Sixteen are modelled on icon-edit pins: Old iPhone, Midnight, Night Flash, Night Blur, Washed Out, Noir Twin, Ember, Camcorder, Golden Grain, Under Arrest, Swag, Whatever, Star Girl, Scrapbook, Hotter than Hell, Soft Advisory. The originals are still there: Original, Icon Twin, Downtown, Sacred Mono, Pixel Pop, Advisory, Grunge B&W, Is this Illegal?, Frutiger Aero, Cybercore, Glitter Bling, Lomo / Disposable, Chrome. Every preset tile is rendered from *your* photo.
 - **Layouts:** Single, Twin, Mirror and Pixel Twin. Two-photo layouts start in a 1:1 frame (or pick Fit, 4:5 or 3:4). **Arrange** mode lets you drag each photo inside its panel, zoom it with the wheel or a pinch, and drag the divider anywhere from 25% to 75%; you can also swap sides and join the panels with a cut, a thin line or a soft fade. Rotate and flip the source photo.
-- **17 adjustments:** brightness, contrast, saturation, hue, warmth, tint, fade, sepia, grayscale, blur, pixelate, soft focus, dreamy glow, film grain, vignette, RGB split, scanlines, plus six split tones (Retro, Ember, Cinema, Midnight, Rose, Olive) and six duotones.
+- **19 adjustments:** brightness, contrast, saturation, hue, warmth, tint, fade, sepia, grayscale, blur, pixelate, soft focus, dreamy glow, film grain, vignette, RGB split, scanlines, plus six split tones (Retro, Ember, Cinema, Midnight, Rose, Olive) and six duotones. Soft focus and dreamy glow each have their own **blur** slider, tucked under the effect, that sets how far the haze or glow spreads; it switches on once the effect does.
 - **55 built-in stickers** in six groups (faces and props like a moustache, nerd glasses and dog ears; stars; exclamations and marks; gothic crosses and advisory labels; flowers and butterflies; Y2K tech), and your own uploads: the server cuts out white backgrounds (flood-filled from the edges, so white details inside the sticker survive). Admin accounts' stickers are shared with everyone.
 - **Text layers** in 15 styles (chrome, holo, neon, bubble, horror, datestamp, white, black, meme caption, glitter, VHS, echo, tooltip, chat bubble, speech bubble) and 9 fonts.
 - **Undo / redo** and keyboard shortcuts (`⌘Z`, `⇧⌘Z`, `⌘S`, `⌘D`, `⌫`, arrows, `[ ]`, `T`, `A`, `?`).
@@ -22,7 +24,11 @@ No AI: every look is plain canvas maths running in your browser, and your photo 
 - **Accounts:** sign up, login with lockout after 5 failed tries, password reset by email. Resetting a password signs out every other session.
 - Light and dark themes (follow the system, toggle to override) and a responsive layout down to phone width.
 
-<img src="docs/editor-mobile.jpg" alt="The editor on a phone" width="300" />
+<p>
+  <img src="docs/filters.png" alt="The Effects tab of filters.dll: Soft focus and Dreamy glow, each with its blur slider indented underneath" width="296" />
+  &nbsp;&nbsp;
+  <img src="docs/editor-mobile.jpg" alt="The editor on a phone" width="262" />
+</p>
 
 ## Stack
 
@@ -96,7 +102,7 @@ backend/app/        FastAPI app: config, db (Mongo + GridFS), security, images (
 backend/tests/      pytest suite
 frontend/src/editor renderer, presets, stickers, text styles, undo history, editor panels
 frontend/src/pages  landing, auth, editor, gallery, public share page
-frontend/public     stickers (17 drawn SVGs + 5 PNGs), sample photo
+frontend/public     stickers (48 SVGs + 7 PNGs), sample photo
 PRODUCT.md          who it's for and what it must keep doing
 DESIGN.md           the visual system (tokens, components, rules)
 ```
@@ -116,6 +122,6 @@ This is a ground-up rewrite of the Emergent-generated version. The original coul
 ## Credits
 
 - Sample portrait: Unsplash photo [`photo-1581841064838-a470c740e8ee`](https://images.unsplash.com/photo-1581841064838-a470c740e8ee), Unsplash License.
-- Fonts from Google Fonts: Unbounded, Chivo, IBM Plex Mono, Press Start 2P, UnifrakturCook.
+- Fonts from Google Fonts: Unbounded, Chivo, IBM Plex Mono, Press Start 2P, UnifrakturCook, Tinos, Anton, VT323.
 - Icons: [Lucide](https://lucide.dev).
-- The chrome rockstar, halftone star, dot stars, parental advisory and pixel cursor stickers come from the original Y2KEDIT build; the other 17 stickers were drawn for this version.
+- The chrome rockstar, halftone star, dot stars, parental advisory and pixel cursor stickers come from the original Y2KEDIT build; the other 50 stickers were drawn for this version.
