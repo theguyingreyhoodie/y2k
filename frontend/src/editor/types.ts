@@ -1,26 +1,73 @@
-export type LayoutId = "single" | "mirror" | "pixel_twin";
+export type LayoutId = "single" | "mirror" | "twin" | "pixel_twin";
 export type Rotation = 0 | 90 | 180 | 270;
+
+/** Output shape. "photo" keeps the photo's own proportions; the rest crop to a fixed aspect. */
+export type FrameId = "photo" | "square" | "portrait" | "tall";
+/** How the two panels of a twin layout meet. */
+export type SeamId = "cut" | "line" | "fade";
+
+/** Where a photo sits inside its panel, set by dragging and zooming in Arrange mode. */
+export interface Crop {
+  x: number; // -1..1: -1 shows the photo's left edge, 1 its right edge (only moves when the photo overflows)
+  y: number; // -1..1: top to bottom
+  zoom: number; // 1..4, on top of the cover fit
+}
+
+export type PanelSlot = "main" | "twin";
+
+/** Arrangement of the panels. Split, swap and seam only matter for two-panel layouts. */
+export interface Composition {
+  frame: FrameId;
+  /** The frame was switched to 1:1 automatically on entering a twin layout; leaving it switches back. */
+  autoFrame: boolean;
+  split: number; // 0.25..0.75, share of the width the main (clean) panel takes
+  swap: boolean; // main panel on the right instead of the left
+  seam: SeamId;
+  main: Crop;
+  twin: Crop;
+}
 
 export interface Filters {
   brightness: number; // 0..200, 100 = unchanged
   contrast: number; // 0..200
   saturation: number; // 0..200
   hue: number; // -180..180 degrees
+  warmth: number; // -100..100, cool to warm
+  tint: number; // -100..100, green to magenta
+  fade: number; // 0..100, lifts blacks and dims whites (matte)
   sepia: number; // 0..100
   grayscale: number; // 0..100
   blur: number; // 0..20, px at a 1000px-tall reference
-  pixelate: number; // 0..40, block size at a 1000px-tall reference
+  soften: number; // 0..100, soft-focus haze that keeps the detail underneath
+  pixelate: number; // 0..60, block size at a 1000px-tall reference
   vignette: number; // 0..100
   grain: number; // 0..100
   glow: number; // 0..100
   rgbSplit: number; // 0..20, px at a 1000px-tall reference
   scanlines: number; // 0..100
+  splitTone: string; // palette id, "none" for off
+  splitAmount: number; // 0..100
   duotone: string; // palette id, "none" for off
   duotoneAmount: number; // 0..100
 }
 
-export type TextStyleId = "chrome" | "holo" | "neon" | "bubble" | "horror" | "date" | "white" | "black";
-export type FontId = "unbounded" | "chivo" | "mono" | "pixel" | "gothic";
+export type TextStyleId =
+  | "chrome"
+  | "holo"
+  | "neon"
+  | "bubble"
+  | "horror"
+  | "date"
+  | "white"
+  | "black"
+  | "caption"
+  | "glitter"
+  | "vhs"
+  | "tooltip"
+  | "chat"
+  | "speech"
+  | "echo";
+export type FontId = "unbounded" | "chivo" | "mono" | "pixel" | "gothic" | "serif" | "poster" | "vcr" | "plain";
 
 interface OverlayBase {
   id: string;
@@ -53,6 +100,7 @@ export interface EditorDoc {
   rotation: Rotation;
   flipX: boolean;
   layout: LayoutId;
+  compose: Composition;
   presetId: string | null;
   filters: Filters;
   overlays: Overlay[];

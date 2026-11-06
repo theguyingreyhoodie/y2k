@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="195" viewBox="0 0 200 76">
+<defs><path id="h" d="M100 30 C109 15 127 9 145 18 C158 25 165 39 178 39 C188 39 193 31 191 22 C190 17 186 14 182 15 C188 9 199 14 199 27 C199 45 183 57 164 56 C144 55 126 47 112 44 C106 43 102 45 100 49 Z"/></defs>
+<g fill="#0c0b0d" stroke="#0c0b0d" stroke-width="1.5" stroke-linejoin="round"><use href="#h"/><use href="#h" transform="translate(200 0) scale(-1 1)"/></g>
+<path d="M120 22 C130 16 141 16 150 22" stroke="#ffffff" stroke-opacity="0.18" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

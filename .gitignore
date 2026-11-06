@@ -19,3 +19,6 @@ screenshots/
 
 # Impeccable review captures (regenerated on each review)
 .impeccable/review/
+
+# Reference pins from Pinterest (other people's photos, kept local only)
+pins/

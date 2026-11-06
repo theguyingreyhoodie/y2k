@@ -1,24 +1,40 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useBlocker, useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
-import { Download, FlipHorizontal2, ImagePlus, Keyboard, LoaderCircle, Redo2, RotateCw, Save, Type, Undo2, Upload } from "lucide-react";
+import {
+  Check,
+  Download,
+  FlipHorizontal2,
+  ImagePlus,
+  Keyboard,
+  LoaderCircle,
+  Move,
+  Redo2,
+  RotateCcw,
+  RotateCw,
+  Save,
+  Type,
+  Undo2,
+  Upload,
+  ZoomIn,
+} from "lucide-react";
 import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, downloadBlob, errorMessage, fetchBlob, type CustomSticker, type Edit } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { DEFAULT_FILTERS, EXPORT_MAX_SIDE, LAYOUTS, newDoc } from "@/editor/defaults";
+import { DEFAULT_CROP, DEFAULT_FILTERS, EXPORT_MAX_SIDE, LAYOUTS, ZOOM_MAX, newDoc } from "@/editor/defaults";
 import { ensureFonts, fontsIn } from "@/editor/fonts";
 import { useHistory } from "@/editor/history";
 import { normalizeDoc } from "@/editor/normalize";
-import { PRESET_BY_ID, applyPreset, overlayId, presetLabel } from "@/editor/presets";
+import { PRESET_BY_ID, applyPreset, overlayId, presetLabel, withLayout } from "@/editor/presets";
 import { canvasToBlob, compositionSize, renderComplete } from "@/editor/render";
 import { checkFile, loadSample, sourceFromBlob, type Source } from "@/editor/source";
-import { registerCustomSticker } from "@/editor/stickers";
-import type { EditorDoc, Filters, LayoutId, Overlay } from "@/editor/types";
+import { loadImage, registerCustomSticker, stickerUrl } from "@/editor/stickers";
+import type { Composition, EditorDoc, Filters, LayoutId, Overlay, PanelSlot } from "@/editor/types";
 import { AdjustPanel, LayoutPanel } from "@/editor/components/AdjustPanel";
 import { LayerPanel } from "@/editor/components/LayerPanel";
 import { PresetPanel } from "@/editor/components/PresetPanel";
-import { Stage } from "@/editor/components/Stage";
+import { Stage, type ArrangeControls } from "@/editor/components/Stage";
 import { StickerPanel } from "@/editor/components/StickerPanel";
 
 type MobileTab = "looks" | "adjust" | "stickers" | "layer";
@@ -32,7 +48,8 @@ const SHORTCUTS: [string, string][] = [
   ["Arrow keys", "Nudge layer (⇧ for 10×)"],
   ["[  ]", "Send backward / bring forward"],
   ["T", "Add text"],
-  ["Esc", "Deselect"],
+  ["A", "Arrange: move and zoom the photos"],
+  ["Esc", "Deselect / finish arranging"],
   ["?", "This list"],
 ];
 
@@ -41,6 +58,8 @@ function isTyping(target: EventTarget | null): boolean {
   if (!el) return false;
   return el.isContentEditable || el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !["range", "checkbox", "button"].includes((el as HTMLInputElement).type));
 }
+
+const TWIN_LABELS: Record<LayoutId, string> = { single: "Twin", twin: "Copy", mirror: "Mirror", pixel_twin: "Pixel twin" };
 
 function defaultTitle(doc: EditorDoc): string {
   return doc.presetId && doc.presetId !== "none" ? `${presetLabel(doc.presetId)} edit` : "Untitled edit";
@@ -65,6 +84,8 @@ export default function Editor() {
   const [fontsVersion, setFontsVersion] = useState(0);
   const [tab, setTab] = useState<MobileTab>("looks");
   const [showKeys, setShowKeys] = useState(false);
+  const [arranging, setArranging] = useState(false);
+  const [arrangeSlot, setArrangeSlot] = useState<PanelSlot>("main");
   const fileRef = useRef<HTMLInputElement>(null);
 
   // A saved edit is dirty when it differs from what was saved (undo back to it and it's clean again);
@@ -191,16 +212,20 @@ export default function Editor() {
   );
 
   const addSticker = useCallback(
-    (ref: string) => {
+    async (ref: string) => {
       if (!source) return;
       const count = doc.overlays.length;
+      // Start every sticker at about the same area, so a wide moustache or a tall lace strip isn't huge or tiny.
+      const url = stickerUrl(ref);
+      const img = url ? await loadImage(url).catch(() => null) : null;
+      const aspect = img && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1;
       addOverlay({
         id: overlayId(),
         kind: "sticker",
         ref,
         x: 0.5 + ((count % 5) - 2) * 0.04,
         y: 0.5 + ((count % 5) - 2) * 0.04,
-        size: 0.22,
+        size: Math.min(0.6, Math.max(0.08, 0.22 / Math.sqrt(aspect))),
         rotation: 0,
         opacity: 1,
         flipX: false,
@@ -265,7 +290,41 @@ export default function Editor() {
     },
     [history],
   );
-  const onLayout = useCallback((layout: LayoutId) => history.apply((d) => ({ ...d, layout })), [history]);
+  const onLayout = useCallback((layout: LayoutId) => history.apply((d) => withLayout(d, layout)), [history]);
+  const onCompose = useCallback(
+    (patch: Partial<Composition>) => history.apply((d) => ({ ...d, compose: { ...d.compose, ...patch } })),
+    [history],
+  );
+  const onComposeLive = useCallback(
+    (patch: Partial<Composition>) => history.update((d) => ({ ...d, compose: { ...d.compose, ...patch } })),
+    [history],
+  );
+  // ---------- Arrange: move and zoom the photos inside the frame ----------
+  const startArrange = useCallback(() => {
+    setSelectedId(null);
+    setArrangeSlot("main");
+    // Arranging happens inside a standard frame; a twin at "Fit" is the too-wide case it exists to fix.
+    if (doc.layout !== "single" && doc.compose.frame === "photo") {
+      history.apply((d) => ({ ...d, compose: { ...d.compose, frame: "square", autoFrame: false } }));
+    }
+    setArranging(true);
+  }, [doc.layout, doc.compose.frame, history]);
+  const stopArrange = useCallback(() => {
+    history.commit();
+    setArranging(false);
+  }, [history]);
+  useEffect(() => {
+    if (selectedId || !source) setArranging(false);
+  }, [selectedId, source]);
+  useEffect(() => {
+    if (doc.layout === "single") setArrangeSlot("main");
+  }, [doc.layout]);
+  const twinLabels = useMemo(() => ({ main: "Photo", twin: TWIN_LABELS[doc.layout] }), [doc.layout]);
+  const arrangeControls = useMemo<ArrangeControls | null>(
+    () => (arranging ? { active: arrangeSlot, labels: twinLabels, onFocus: setArrangeSlot, onChange: onComposeLive, onCommit: history.commit } : null),
+    [arranging, arrangeSlot, twinLabels, onComposeLive, history.commit],
+  );
+
   const rotate = useCallback(() => history.apply((d) => ({ ...d, rotation: (((d.rotation + 90) % 360) as EditorDoc["rotation"]) })), [history]);
   const flip = useCallback(() => history.apply((d) => ({ ...d, flipX: !d.flipX })), [history]);
 
@@ -351,6 +410,15 @@ export default function Editor() {
         setShowKeys(true);
         return;
       }
+      if (key === "escape" && arranging) {
+        stopArrange();
+        return;
+      }
+      if (key === "a" && source && !arranging) {
+        e.preventDefault();
+        startArrange();
+        return;
+      }
       if (key === "t" && source) {
         e.preventDefault();
         addText();
@@ -380,7 +448,7 @@ export default function Editor() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [save, history, duplicateOverlay, addText, source, selectedId, removeOverlay, reorder, doc.overlays, updateOverlay]);
+  }, [save, history, duplicateOverlay, addText, source, selectedId, removeOverlay, reorder, doc.overlays, updateOverlay, arranging, stopArrange, startArrange]);
 
   // Drop the selection if undo/redo removed the selected layer.
   useEffect(() => {
@@ -458,7 +526,15 @@ export default function Editor() {
       <div className="editor__left">
         <div className="editor__group" data-active={tab === "looks"}>
           <PresetPanel source={source?.canvas ?? null} doc={doc} onApply={onPreset} />
-          <LayoutPanel doc={doc} disabled={!source} onLayout={onLayout} />
+          <LayoutPanel
+            doc={doc}
+            disabled={!source}
+            onLayout={onLayout}
+            onCompose={onCompose}
+            onComposeLive={onComposeLive}
+            onCommit={history.commit}
+            onArrange={startArrange}
+          />
         </div>
         <div className="editor__group" data-active={tab === "adjust"}>
           <AdjustPanel
@@ -479,7 +555,11 @@ export default function Editor() {
           status={
             <>
               <span className="tabular">
-                {comp ? `${comp.width} × ${comp.height} px · ${layoutLabel} · ${doc.overlays.length} ${doc.overlays.length === 1 ? "layer" : "layers"}` : "No photo yet"}
+                {arranging
+                  ? "Drag a photo to move it · scroll or pinch to zoom · drag the divider"
+                  : comp
+                    ? `${comp.width} × ${comp.height} px · ${layoutLabel} · ${doc.overlays.length} ${doc.overlays.length === 1 ? "layer" : "layers"}`
+                    : "No photo yet"}
               </span>
               <button type="button" className="status-btn" onClick={() => setShowKeys(true)}>
                 <Keyboard size={13} aria-hidden="true" />
@@ -488,46 +568,90 @@ export default function Editor() {
             </>
           }
         >
-          <div className="toolbar" role="toolbar" aria-label="Editor tools">
-            <button type="button" className="btn btn--chrome btn--sm" onClick={() => fileRef.current?.click()}>
-              <Upload size={14} aria-hidden="true" />
-              <span className="toolbar__label">{source ? "New photo" : "Upload"}</span>
-            </button>
-            <button type="button" className="btn btn--pink btn--sm" onClick={addText} disabled={!source}>
-              <Type size={14} aria-hidden="true" />
-              <span className="toolbar__label">Text</span>
-            </button>
-            <span className="toolbar__sep" aria-hidden="true" />
-            <button type="button" className="tool" onClick={history.undo} disabled={!history.canUndo} aria-label="Undo" title="Undo (⌘Z)">
-              <Undo2 size={16} aria-hidden="true" />
-            </button>
-            <button type="button" className="tool" onClick={history.redo} disabled={!history.canRedo} aria-label="Redo" title="Redo (⇧⌘Z)">
-              <Redo2 size={16} aria-hidden="true" />
-            </button>
-            <button type="button" className="tool" onClick={rotate} disabled={!source} aria-label="Rotate photo 90°" title="Rotate 90°">
-              <RotateCw size={16} aria-hidden="true" />
-            </button>
-            <button type="button" className="tool" onClick={flip} disabled={!source} aria-pressed={doc.flipX} aria-label="Flip photo" title="Flip photo">
-              <FlipHorizontal2 size={16} aria-hidden="true" />
-            </button>
-            <span className="toolbar__grow" />
-            {edit ? (
-              <button type="button" className="btn btn--ghost btn--sm toolbar__copy" onClick={() => save(true)} disabled={!source || saving}>
-                Save as copy
-              </button>
-            ) : null}
-            <button type="button" className="btn btn--chrome btn--sm" onClick={() => save()} disabled={!source || saving || (!!edit && !dirty)}>
-              {saving ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Save size={14} aria-hidden="true" />}
-              <span className="toolbar__label">{saving ? "Saving…" : edit ? (dirty ? "Save" : "Saved") : "Save"}</span>
-            </button>
-            <button type="button" className="btn btn--sm" onClick={exportPng} disabled={!source || exporting}>
-              {exporting ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Download size={14} aria-hidden="true" />}
-              <span>PNG</span>
-            </button>
+          <div className="toolbar" role="toolbar" aria-label={arranging ? "Arrange tools" : "Editor tools"}>
+            {arranging ? (
+              <>
+                <button type="button" className="btn btn--pink btn--sm" onClick={stopArrange}>
+                  <Check size={14} aria-hidden="true" />
+                  <span>Done</span>
+                </button>
+                {doc.layout !== "single" ? (
+                  <div className="seg seg--sm toolbar__slots" role="group" aria-label="Photo to zoom">
+                    {(["main", "twin"] as PanelSlot[]).map((slot) => (
+                      <button key={slot} type="button" aria-pressed={arrangeSlot === slot} onClick={() => setArrangeSlot(slot)}>
+                        {twinLabels[slot]}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                <label className="toolbar__zoom">
+                  <ZoomIn size={15} aria-hidden="true" />
+                  <span className="visually-hidden">Zoom</span>
+                  <input
+                    className="range"
+                    type="range"
+                    min={100}
+                    max={ZOOM_MAX * 100}
+                    value={Math.round(doc.compose[arrangeSlot].zoom * 100)}
+                    style={{ "--fill": `${((doc.compose[arrangeSlot].zoom - 1) / (ZOOM_MAX - 1)) * 100}%` } as CSSProperties}
+                    onChange={(e) => onComposeLive({ [arrangeSlot]: { ...doc.compose[arrangeSlot], zoom: Number(e.target.value) / 100 } })}
+                    onPointerUp={history.commit}
+                    onKeyUp={history.commit}
+                  />
+                  <span className="toolbar__zoom-value tabular">{doc.compose[arrangeSlot].zoom.toFixed(1)}×</span>
+                </label>
+                <button type="button" className="btn btn--ghost btn--sm" onClick={() => onCompose({ [arrangeSlot]: DEFAULT_CROP })} title="Centre this photo and zoom out">
+                  <RotateCcw size={14} aria-hidden="true" />
+                  <span className="toolbar__label">Reset</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" className="btn btn--chrome btn--sm" onClick={() => fileRef.current?.click()}>
+                  <Upload size={14} aria-hidden="true" />
+                  <span className="toolbar__label">{source ? "New photo" : "Upload"}</span>
+                </button>
+                <button type="button" className="btn btn--pink btn--sm" onClick={addText} disabled={!source}>
+                  <Type size={14} aria-hidden="true" />
+                  <span className="toolbar__label">Text</span>
+                </button>
+                <span className="toolbar__sep" aria-hidden="true" />
+                <button type="button" className="tool" onClick={history.undo} disabled={!history.canUndo} aria-label="Undo" title="Undo (⌘Z)">
+                  <Undo2 size={16} aria-hidden="true" />
+                </button>
+                <button type="button" className="tool" onClick={history.redo} disabled={!history.canRedo} aria-label="Redo" title="Redo (⇧⌘Z)">
+                  <Redo2 size={16} aria-hidden="true" />
+                </button>
+                <button type="button" className="tool" onClick={rotate} disabled={!source} aria-label="Rotate photo 90°" title="Rotate 90°">
+                  <RotateCw size={16} aria-hidden="true" />
+                </button>
+                <button type="button" className="tool" onClick={flip} disabled={!source} aria-pressed={doc.flipX} aria-label="Flip photo" title="Flip photo">
+                  <FlipHorizontal2 size={16} aria-hidden="true" />
+                </button>
+                <button type="button" className="tool" onClick={startArrange} disabled={!source} aria-label="Arrange photos" title="Arrange: move and zoom the photos (A)">
+                  <Move size={16} aria-hidden="true" />
+                </button>
+                <span className="toolbar__grow" />
+                {edit ? (
+                  <button type="button" className="btn btn--ghost btn--sm toolbar__copy" onClick={() => save(true)} disabled={!source || saving}>
+                    Save as copy
+                  </button>
+                ) : null}
+                <button type="button" className="btn btn--chrome btn--sm" onClick={() => save()} disabled={!source || saving || (!!edit && !dirty)}>
+                  {saving ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Save size={14} aria-hidden="true" />}
+                  <span className="toolbar__label">{saving ? "Saving…" : edit ? (dirty ? "Save" : "Saved") : "Save"}</span>
+                </button>
+                <button type="button" className="btn btn--sm" onClick={exportPng} disabled={!source || exporting}>
+                  {exporting ? <LoaderCircle size={14} className="spin" aria-hidden="true" /> : <Download size={14} aria-hidden="true" />}
+                  <span>PNG</span>
+                </button>
+              </>
+            )}
           </div>
 
           <div className="canvas-window__stage">
             <Stage
+              arrange={arrangeControls}
               source={source?.canvas ?? null}
               doc={doc}
               selectedId={selectedId}
@@ -553,9 +677,6 @@ export default function Editor() {
       </section>
 
       <div className="editor__right">
-        <div className="editor__group" data-active={tab === "stickers"}>
-          <StickerPanel disabled={!source} stickers={stickers} onStickersChange={setStickers} onAdd={addSticker} isAdmin={!!user?.is_admin} />
-        </div>
         <div className="editor__group" data-active={tab === "layer"}>
           <LayerPanel
             layer={selected}
@@ -574,6 +695,9 @@ export default function Editor() {
             onAddText={addText}
             onShowShortcuts={() => setShowKeys(true)}
           />
+        </div>
+        <div className="editor__group" data-active={tab === "stickers"}>
+          <StickerPanel disabled={!source} stickers={stickers} onStickersChange={setStickers} onAdd={addSticker} isAdmin={!!user?.is_admin} />
         </div>
       </div>
 

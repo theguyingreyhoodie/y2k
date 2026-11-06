@@ -1,8 +1,20 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { RotateCw, Trash2 } from "lucide-react";
-import { compositionSize, drawOverlays, makeCanvas, overlayBox, renderBase } from "../render";
+import { SPLIT_MAX, SPLIT_MIN, ZOOM_MAX } from "../defaults";
+import { compositionSize, coverPlacement, drawOverlays, makeCanvas, overlayBox, renderBase, slotOf, type CompSize } from "../render";
 import { onStickerLoaded, stickerLabel } from "../stickers";
-import type { EditorDoc, Overlay } from "../types";
+import type { Composition, Crop, EditorDoc, Overlay, PanelSlot } from "../types";
 
 const PREVIEW_MAX_PIXELS = 1_600_000;
 const MIN_SIZE = 0.02;
@@ -10,7 +22,18 @@ const MAX_SIZE = 1.6;
 
 type Patch = Partial<Pick<Overlay, "x" | "y" | "size" | "rotation">>;
 
+/** Arrange mode: the photos themselves are dragged and zoomed, and the divider between them moves. */
+export interface ArrangeControls {
+  active: PanelSlot;
+  labels: Record<PanelSlot, string>;
+  onFocus: (slot: PanelSlot) => void;
+  /** Live change while a gesture runs. */
+  onChange: (patch: Partial<Composition>) => void;
+  onCommit: () => void;
+}
+
 interface StageProps {
+  arrange?: ArrangeControls | null;
   source: HTMLCanvasElement | null;
   doc: EditorDoc;
   selectedId: string | null;
@@ -44,10 +67,15 @@ type Gesture =
       oy: number;
     };
 
+type ArrangeGesture =
+  | { kind: "pan"; slot: PanelSlot; pointer: number; sx: number; sy: number; start: Crop; ox: number; oy: number }
+  | { kind: "zoom"; slot: PanelSlot; a: number; b: number; startDist: number; startZoom: number }
+  | { kind: "seam"; pointer: number };
+
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const normAngle = (deg: number) => ((((deg + 180) % 360) + 360) % 360) - 180;
 
-export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, onRemove, onDropFile, empty, fontsVersion }: StageProps) {
+export function Stage({ arrange, source, doc, selectedId, onSelect, onChange, onCommit, onRemove, onDropFile, empty, fontsVersion }: StageProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,6 +118,8 @@ export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, o
   // ---------- Rendering: cached base (photo + filters), overlays composited on top ----------
   const docRef = useRef(doc);
   docRef.current = doc;
+  const arrangingRef = useRef(!!arrange);
+  arrangingRef.current = !!arrange;
   const frame = useRef(0);
   const needsBase = useRef(true);
 
@@ -114,7 +144,8 @@ export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, o
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, size.width, size.height);
     ctx.drawImage(base, 0, 0);
-    drawOverlays(ctx, d.overlays, size.width, size.height);
+    // While arranging, stickers and text fade back so the photos underneath are easy to place.
+    drawOverlays(ctx, d.overlays, size.width, size.height, arrangingRef.current ? 0.3 : 1);
   }, [source, box.w, box.h]);
 
   // The frame always runs the latest paint, even if the stage resized while it was queued.
@@ -130,8 +161,8 @@ export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, o
     [paint],
   );
 
-  useEffect(() => schedule(true), [schedule, doc.filters, doc.layout, doc.rotation, doc.flipX]);
-  useEffect(() => schedule(false), [schedule, doc.overlays, stickerTick, fontsVersion]);
+  useEffect(() => schedule(true), [schedule, doc.filters, doc.layout, doc.compose, doc.rotation, doc.flipX]);
+  useEffect(() => schedule(false), [schedule, doc.overlays, stickerTick, fontsVersion, !!arrange]);
   useEffect(
     () => () => {
       cancelAnimationFrame(frame.current);
@@ -338,6 +369,170 @@ export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
+  // ---------- Arrange mode ----------
+  const arrangeEl = useRef<HTMLDivElement>(null);
+  const arrangeRef = useRef(arrange);
+  arrangeRef.current = arrange;
+  const arrangeGesture = useRef<ArrangeGesture | null>(null);
+  const arrangePointers = useRef(new Map<number, { x: number; y: number }>());
+  const [grabbing, setGrabbing] = useState(false);
+  const compRef = useRef(comp);
+  compRef.current = comp;
+
+  /** The panel under a screen x, with its size on screen. */
+  const panelAt = (clientX: number) => {
+    const el = arrangeEl.current;
+    const comp = compRef.current;
+    if (!el || !comp) return null;
+    const rect = el.getBoundingClientRect();
+    const fx = ((clientX - rect.left) / rect.width) * comp.width;
+    const panel = comp.panels.find((p) => fx >= p.x && fx < p.x + p.w) ?? comp.panels[fx < 0 ? 0 : comp.panels.length - 1];
+    return { slot: slotOf(panel), w: (panel.w / comp.width) * rect.width, h: rect.height };
+  };
+
+  const startPan = (slot: PanelSlot, pointer: number, x: number, y: number) => {
+    const at = panelAt(x);
+    if (!at || !source) return;
+    const crop = docRef.current.compose[slot];
+    const { ox, oy } = coverPlacement(source, docRef.current.rotation, crop, at.w, at.h);
+    arrangeGesture.current = { kind: "pan", slot, pointer, sx: x, sy: y, start: crop, ox, oy };
+  };
+
+  const setCrop = (slot: PanelSlot, patch: Partial<Crop>) =>
+    arrangeRef.current?.onChange({ [slot]: { ...docRef.current.compose[slot], ...patch } });
+
+  const onArrangeDown = (e: ReactPointerEvent) => {
+    if (e.button !== 0 || !arrangeRef.current) return;
+    e.preventDefault();
+    arrangePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try {
+      arrangeEl.current?.setPointerCapture(e.pointerId);
+    } catch {
+      // see capture() above
+    }
+    setGrabbing(true);
+    if ((e.target as HTMLElement).closest("[data-seam]")) {
+      arrangeGesture.current = { kind: "seam", pointer: e.pointerId };
+      return;
+    }
+    const g = arrangeGesture.current;
+    if (arrangePointers.current.size >= 2) {
+      const [a, b] = [...arrangePointers.current.keys()];
+      const pa = arrangePointers.current.get(a)!;
+      const pb = arrangePointers.current.get(b)!;
+      const slot = g && g.kind !== "seam" ? g.slot : (panelAt((pa.x + pb.x) / 2)?.slot ?? "main");
+      arrangeGesture.current = { kind: "zoom", slot, a, b, startDist: Math.hypot(pb.x - pa.x, pb.y - pa.y) || 1, startZoom: docRef.current.compose[slot].zoom };
+      return;
+    }
+    const at = panelAt(e.clientX);
+    if (!at) return;
+    arrangeRef.current.onFocus(at.slot);
+    startPan(at.slot, e.pointerId, e.clientX, e.clientY);
+  };
+
+  const onArrangeMove = (e: ReactPointerEvent) => {
+    if (!arrangePointers.current.has(e.pointerId)) return;
+    arrangePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const g = arrangeGesture.current;
+    if (!g) return;
+    if (g.kind === "pan" && e.pointerId === g.pointer) {
+      // Only an axis the photo overflows can move; the other keeps its value.
+      setCrop(g.slot, {
+        x: g.ox > 0.5 ? clamp(g.start.x + (e.clientX - g.sx) / (g.ox / 2), -1, 1) : g.start.x,
+        y: g.oy > 0.5 ? clamp(g.start.y + (e.clientY - g.sy) / (g.oy / 2), -1, 1) : g.start.y,
+      });
+    } else if (g.kind === "zoom") {
+      const pa = arrangePointers.current.get(g.a);
+      const pb = arrangePointers.current.get(g.b);
+      if (!pa || !pb) return;
+      setCrop(g.slot, { zoom: clamp((g.startZoom * Math.hypot(pb.x - pa.x, pb.y - pa.y)) / g.startDist, 1, ZOOM_MAX) });
+    } else if (g.kind === "seam" && e.pointerId === g.pointer) {
+      const rect = arrangeEl.current!.getBoundingClientRect();
+      const at = clamp((e.clientX - rect.left) / rect.width, SPLIT_MIN, SPLIT_MAX);
+      arrangeRef.current?.onChange({ split: docRef.current.compose.swap ? 1 - at : at });
+    }
+  };
+
+  const onArrangeUp = (e: ReactPointerEvent) => {
+    arrangePointers.current.delete(e.pointerId);
+    const g = arrangeGesture.current;
+    if (g?.kind === "zoom" && arrangePointers.current.size === 1) {
+      // One finger lifted: keep moving the same photo with the other, at its new zoom.
+      const [id] = [...arrangePointers.current.keys()];
+      const p = arrangePointers.current.get(id)!;
+      startPan(g.slot, id, p.x, p.y);
+      return;
+    }
+    if (arrangePointers.current.size === 0) {
+      arrangeGesture.current = null;
+      setGrabbing(false);
+      if (g) arrangeRef.current?.onCommit();
+    }
+  };
+
+  // Wheel and trackpad zoom the photo under the pointer. Safari's trackpad pinch arrives as gesture events.
+  const arranging = !!arrange;
+  useEffect(() => {
+    const el = arrangeEl.current;
+    if (!el || !arranging) return;
+    let commitTimer = 0;
+    const settle = () => {
+      window.clearTimeout(commitTimer);
+      commitTimer = window.setTimeout(() => arrangeRef.current?.onCommit(), 250);
+    };
+    const onWheel = (e: WheelEvent) => {
+      const at = panelAt(e.clientX);
+      if (!at) return;
+      e.preventDefault();
+      arrangeRef.current?.onFocus(at.slot);
+      const crop = docRef.current.compose[at.slot];
+      setCrop(at.slot, { zoom: clamp(crop.zoom * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0025)), 1, ZOOM_MAX) });
+      settle();
+    };
+    let start: { slot: PanelSlot; zoom: number } | null = null;
+    const onGestureStart = (e: Event) => {
+      const at = panelAt((e as MouseEvent).clientX);
+      if (!at) return;
+      e.preventDefault();
+      start = { slot: at.slot, zoom: docRef.current.compose[at.slot].zoom };
+    };
+    const onGestureChange = (e: Event) => {
+      if (!start) return;
+      e.preventDefault();
+      setCrop(start.slot, { zoom: clamp(start.zoom * (e as Event & { scale: number }).scale, 1, ZOOM_MAX) });
+    };
+    const onGestureEnd = (e: Event) => {
+      if (!start) return;
+      e.preventDefault();
+      start = null;
+      arrangeRef.current?.onCommit();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("gesturestart", onGestureStart);
+    el.addEventListener("gesturechange", onGestureChange);
+    el.addEventListener("gestureend", onGestureEnd);
+    return () => {
+      window.clearTimeout(commitTimer);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("gesturestart", onGestureStart);
+      el.removeEventListener("gesturechange", onGestureChange);
+      el.removeEventListener("gestureend", onGestureEnd);
+    };
+    // Everything it reads goes through refs; rebinding mid-gesture would drop it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arranging, source]);
+
+  const onSeamKey = (e: ReactKeyboardEvent) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    e.stopPropagation();
+    const c = docRef.current.compose;
+    const at = (c.swap ? 1 - c.split : c.split) + (e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 0.05 : 0.01);
+    const next = clamp(at, SPLIT_MIN, SPLIT_MAX);
+    arrangeRef.current?.onChange({ split: c.swap ? 1 - next : next });
+    arrangeRef.current?.onCommit();
+  };
+
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setDragOver(false);
@@ -427,8 +622,61 @@ export function Stage({ source, doc, selectedId, onSelect, onChange, onCommit, o
                 );
               })}
           </div>
+          {arrange && comp ? <ArrangeLayer comp={comp} arrange={arrange} grabbing={grabbing} elRef={arrangeEl} onDown={onArrangeDown} onMove={onArrangeMove} onUp={onArrangeUp} onSeamKey={onSeamKey} /> : null}
         </div>
       )}
+    </div>
+  );
+}
+
+interface ArrangeLayerProps {
+  comp: CompSize;
+  arrange: ArrangeControls;
+  grabbing: boolean;
+  elRef: RefObject<HTMLDivElement | null>;
+  onDown: (e: ReactPointerEvent) => void;
+  onMove: (e: ReactPointerEvent) => void;
+  onUp: (e: ReactPointerEvent) => void;
+  onSeamKey: (e: ReactKeyboardEvent) => void;
+}
+
+function ArrangeLayer({ comp, arrange, grabbing, elRef, onDown, onMove, onUp, onSeamKey }: ArrangeLayerProps) {
+  const pct = (v: number) => `${(v / comp.width) * 100}%`;
+  const seam = comp.panels.length === 2 ? comp.panels[1].x : null;
+  return (
+    <div
+      ref={elRef}
+      className={`arrange ${grabbing ? "arrange--grabbing" : ""}`}
+      onPointerDown={onDown}
+      onPointerMove={onMove}
+      onPointerUp={onUp}
+      onPointerCancel={onUp}
+    >
+      {comp.panels.map((p) => {
+        const slot = slotOf(p);
+        return (
+          <div key={slot} className={`arrange__panel ${slot === arrange.active ? "arrange__panel--active" : ""}`} style={{ left: pct(p.x), width: pct(p.w) }}>
+            <span className="arrange__tag">{arrange.labels[slot]}</span>
+          </div>
+        );
+      })}
+      {seam !== null ? (
+        <div
+          className="arrange__seam"
+          style={{ left: pct(seam) }}
+          data-seam
+          role="slider"
+          tabIndex={0}
+          aria-label="Divider between the photos"
+          aria-valuemin={Math.round(SPLIT_MIN * 100)}
+          aria-valuemax={Math.round(SPLIT_MAX * 100)}
+          aria-valuenow={Math.round((seam / comp.width) * 100)}
+          aria-valuetext={`${Math.round((seam / comp.width) * 100)}% from the left`}
+          onKeyDown={onSeamKey}
+        >
+          <span className="arrange__grip" />
+        </div>
+      ) : null}
     </div>
   );
 }

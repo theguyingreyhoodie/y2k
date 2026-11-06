@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, errorMessage, type CustomSticker } from "@/lib/api";
-import { BUILTIN_STICKERS, registerCustomSticker, stickerUrl } from "../stickers";
+import { BUILTIN_STICKERS, STICKER_GROUPS, registerCustomSticker, stickerUrl } from "../stickers";
 
 interface StickerPanelProps {
   disabled: boolean;
@@ -127,21 +127,28 @@ export function StickerPanel({ disabled, stickers, onStickersChange, onAdd, isAd
         </div>
       ) : null}
 
-      <div className="sticker-grid" role="group" aria-label="Built-in stickers">
-        {BUILTIN_STICKERS.map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            className="sticker-btn"
-            disabled={disabled}
-            onClick={() => onAdd(`builtin:${s.key}`)}
-            title={s.label}
-            aria-label={`Add ${s.label}`}
-          >
-            <img src={`/stickers/${s.file}`} alt="" loading="lazy" draggable={false} />
-          </button>
-        ))}
-      </div>
+      {STICKER_GROUPS.map((g) => (
+        <section key={g.id} className="stickers__group" aria-labelledby={`stickers-${g.id}`}>
+          <h3 className="panel-heading" id={`stickers-${g.id}`}>
+            {g.label}
+          </h3>
+          <div className="sticker-grid">
+            {BUILTIN_STICKERS.filter((s) => s.group === g.id).map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                className={`sticker-btn${s.tile ? ` sticker-btn--${s.tile}` : ""}`}
+                disabled={disabled}
+                onClick={() => onAdd(`builtin:${s.key}`)}
+                title={s.label}
+                aria-label={`Add ${s.label}`}
+              >
+                <img src={`/stickers/${s.file}`} alt="" loading="lazy" draggable={false} />
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
 
       <div className="stickers__mine">
         <h3 className="panel-heading">Your stickers</h3>

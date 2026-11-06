@@ -1,10 +1,17 @@
-import { DEFAULT_FILTERS, FONTS, TEXT_STYLES, newDoc } from "./defaults";
-import type { EditorDoc, Filters, FontId, LayoutId, Overlay, Rotation, TextStyleId } from "./types";
+import { DEFAULT_COMPOSE, DEFAULT_FILTERS, FONTS, FRAMES, SEAMS, SPLIT_MAX, SPLIT_MIN, TEXT_STYLES, ZOOM_MAX, newDoc } from "./defaults";
+import type { Crop, EditorDoc, Filters, FontId, FrameId, LayoutId, Overlay, Rotation, SeamId, TextStyleId } from "./types";
 
 const num = (v: unknown, fallback: number, min: number, max: number) =>
   typeof v === "number" && Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback;
 
-const LAYOUT_IDS: LayoutId[] = ["single", "mirror", "pixel_twin"];
+const LAYOUT_IDS: LayoutId[] = ["single", "mirror", "twin", "pixel_twin"];
+const FRAME_IDS = FRAMES.map((f) => f.id);
+const SEAM_IDS = SEAMS.map((s) => s.id);
+
+function normalizeCrop(raw: unknown): Crop {
+  const c = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  return { x: num(c.x, 0, -1, 1), y: num(c.y, 0, -1, 1), zoom: num(c.zoom, 1, 1, ZOOM_MAX) };
+}
 const STYLE_IDS = TEXT_STYLES.map((s) => s.id);
 
 /** Turns a saved `state` (which could be anything) back into a valid document. */
@@ -19,10 +26,25 @@ export function normalizeDoc(raw: unknown): EditorDoc {
   doc.layout = LAYOUT_IDS.includes(r.layout as LayoutId) ? (r.layout as LayoutId) : "single";
   doc.presetId = typeof r.presetId === "string" ? r.presetId : null;
 
+  // Edits saved before compositions existed have no `compose`; the defaults reproduce how they looked.
+  const c = (r.compose && typeof r.compose === "object" ? r.compose : {}) as Record<string, unknown>;
+  doc.compose = {
+    frame: FRAME_IDS.includes(c.frame as FrameId) ? (c.frame as FrameId) : DEFAULT_COMPOSE.frame,
+    autoFrame: c.autoFrame === true,
+    split: num(c.split, DEFAULT_COMPOSE.split, SPLIT_MIN, SPLIT_MAX),
+    swap: c.swap === true,
+    seam: SEAM_IDS.includes(c.seam as SeamId) ? (c.seam as SeamId) : DEFAULT_COMPOSE.seam,
+    main: normalizeCrop(c.main),
+    twin: normalizeCrop(c.twin),
+  };
+
   const f = (r.filters && typeof r.filters === "object" ? r.filters : {}) as Record<string, unknown>;
   const filters: Filters = { ...DEFAULT_FILTERS };
   for (const key of Object.keys(DEFAULT_FILTERS) as (keyof Filters)[]) {
-    if (key === "duotone") filters.duotone = typeof f.duotone === "string" ? f.duotone : "none";
+    if (key === "duotone" || key === "splitTone") {
+      const v = f[key];
+      filters[key] = typeof v === "string" ? v : "none";
+    }
     else filters[key] = num(f[key], DEFAULT_FILTERS[key], -360, 360);
   }
   doc.filters = filters;
