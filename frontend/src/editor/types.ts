@@ -39,10 +39,12 @@ export interface Filters {
   grayscale: number; // 0..100
   blur: number; // 0..20, px at a 1000px-tall reference
   soften: number; // 0..100, soft-focus haze that keeps the detail underneath
+  softenBlur: number; // 2..40, how far the soft-focus haze spreads: px at a 1000px-tall reference
   pixelate: number; // 0..60, block size at a 1000px-tall reference
   vignette: number; // 0..100
   grain: number; // 0..100
   glow: number; // 0..100
+  glowBlur: number; // 6..90, how far the glow blooms out of the highlights: px at a 1000px-tall reference
   rgbSplit: number; // 0..20, px at a 1000px-tall reference
   scanlines: number; // 0..100
   splitTone: string; // palette id, "none" for off

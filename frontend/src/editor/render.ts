@@ -2,7 +2,7 @@
  * The one renderer. The stage preview, the preset thumbnails, the landing-page demo and the exported
  * PNG all go through these functions, so what you see is exactly what you download.
  *
- * Every size-dependent effect (blur radius, pixel blocks, RGB split, grain, scanlines) is expressed
+ * Every size-dependent effect (blur radii, pixel blocks, RGB split, grain, scanlines) is expressed
  * relative to a 1000px-tall panel, so a 300px preview and a 2400px export look the same.
  */
 import { DUOTONES, FRAMES, SPLIT_TONES } from "./defaults";
@@ -407,12 +407,12 @@ function blurInPlace(c: HTMLCanvasElement, radius: number) {
 
 // ---------- Overlay effects ----------
 /** Soft focus: a blurred copy laid over the photo, plus a lighten pass so highlights halo like a diffusion filter. */
-function applySoften(c: HTMLCanvasElement, amount: number) {
+function applySoften(c: HTMLCanvasElement, amount: number, radius: number) {
   const a = amount / 100;
   const soft = scratchCanvas("soften", c.width, c.height);
   const sctx = ctx2d(soft);
   sctx.drawImage(c, 0, 0);
-  blurInPlace(soft, Math.max(2, c.height * 0.012));
+  blurInPlace(soft, Math.max(1, radius));
   const ctx = ctx2d(c);
   ctx.save();
   ctx.globalAlpha = a * 0.55;
@@ -423,7 +423,8 @@ function applySoften(c: HTMLCanvasElement, amount: number) {
   ctx.restore();
 }
 
-function applyGlow(c: HTMLCanvasElement, amount: number) {
+/** Dreamy glow: highlights only, blurred at quarter size (`radius` is in full-size pixels) and screened back on. */
+function applyGlow(c: HTMLCanvasElement, amount: number, radius: number) {
   const sw = Math.max(1, Math.round(c.width / 4));
   const sh = Math.max(1, Math.round(c.height / 4));
   const small = scratchCanvas("glow", sw, sh);
@@ -438,7 +439,7 @@ function applyGlow(c: HTMLCanvasElement, amount: number) {
     d[i + 2] = (d[i + 2] - 120) * 1.7;
   }
   sctx.putImageData(img, 0, 0);
-  blurInPlace(small, Math.max(2, sh * 0.03));
+  blurInPlace(small, Math.max(1, (radius * sh) / c.height));
   const ctx = ctx2d(c);
   ctx.save();
   ctx.globalCompositeOperation = "screen";
@@ -531,9 +532,9 @@ export function renderBase(target: HTMLCanvasElement, src: ImageSource, doc: Edi
   drawPanels(target, src, doc, size);
 
   colourPass(target, f, f.rgbSplit * ref);
-  if (f.soften > 0) applySoften(target, f.soften);
+  if (f.soften > 0) applySoften(target, f.soften, f.softenBlur * ref);
   if (f.blur > 0) blurInPlace(target, f.blur * ref);
-  if (f.glow > 0) applyGlow(target, f.glow);
+  if (f.glow > 0) applyGlow(target, f.glow, f.glowBlur * ref);
 
   ctx.save();
   if (f.vignette > 0) {

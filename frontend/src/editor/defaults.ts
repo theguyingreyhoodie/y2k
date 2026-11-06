@@ -12,10 +12,12 @@ export const DEFAULT_FILTERS: Filters = {
   grayscale: 0,
   blur: 0,
   soften: 0,
+  softenBlur: 12,
   pixelate: 0,
   vignette: 0,
   grain: 0,
   glow: 0,
+  glowBlur: 30,
   rgbSplit: 0,
   scanlines: 0,
   splitTone: "none",
@@ -54,6 +56,9 @@ export interface SliderSpec {
   min: number;
   max: number;
   unit?: string;
+  step?: number;
+  /** A setting of another effect: drawn indented under it and disabled while that effect is off. */
+  parent?: SliderSpec["key"];
 }
 
 export const ADJUST_SLIDERS: SliderSpec[] = [
@@ -66,13 +71,15 @@ export const ADJUST_SLIDERS: SliderSpec[] = [
   { key: "fade", label: "Fade", min: 0, max: 100, unit: "%" },
   { key: "sepia", label: "Sepia", min: 0, max: 100, unit: "%" },
   { key: "grayscale", label: "Grayscale", min: 0, max: 100, unit: "%" },
-  { key: "blur", label: "Blur", min: 0, max: 20 },
+  { key: "blur", label: "Blur", min: 0, max: 20, step: 0.5 },
 ];
 
 export const EFFECT_SLIDERS: SliderSpec[] = [
   { key: "pixelate", label: "Pixelate", min: 0, max: 60 },
   { key: "soften", label: "Soft focus", min: 0, max: 100 },
+  { key: "softenBlur", label: "Soft focus blur", min: 2, max: 40, parent: "soften" },
   { key: "glow", label: "Dreamy glow", min: 0, max: 100 },
+  { key: "glowBlur", label: "Glow blur", min: 6, max: 90, parent: "glow" },
   { key: "grain", label: "Film grain", min: 0, max: 100 },
   { key: "vignette", label: "Vignette", min: 0, max: 100 },
   { key: "rgbSplit", label: "RGB split", min: 0, max: 20 },
