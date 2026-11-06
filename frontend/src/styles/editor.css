@@ -448,6 +448,64 @@
   color: var(--pink-ink);
 }
 
+/* ---------- Blur meter: in the canvas status bar while the look has blur in it ---------- */
+.canvas-window .window__status {
+  min-height: 36px; /* tall enough for the meter, so the stage doesn't jump when it appears */
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+/* The size line gives way first, so Shortcuts keeps its place beside it on a phone. */
+.canvas-window .window__status > .tabular { flex: 1 1 0; min-width: 0; }
+.blur-meter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 1px 8px 1px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.blur-meter__label {
+  margin-right: 2px;
+  color: var(--pink-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+.blur-meter__step {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-2);
+}
+.blur-meter__step:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--pink-ink);
+}
+.blur-meter__step:disabled { opacity: 0.35; }
+.blur-meter__range { width: 140px; height: 24px; }
+.blur-meter__value {
+  min-width: 38px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.blur-meter__value--reset {
+  border-radius: 4px;
+  color: var(--pink-ink);
+}
+.blur-meter__value--reset:hover { text-decoration: underline; text-underline-offset: 2px; }
+
 /* ---------- Arrange mode ---------- */
 .arrange {
   position: absolute;
@@ -759,6 +817,9 @@ kbd {
 }
 @media (max-width: 640px) {
   .presets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Own row under the size line, as wide as the canvas, so the track is easy to drag with a thumb. */
+  .blur-meter { order: 3; flex: 1 1 100%; margin-left: 0; }
+  .blur-meter__range { flex: 1; width: auto; }
   .toolbar { gap: 4px; padding: 8px; }
   .toolbar__label,
   .toolbar__copy,

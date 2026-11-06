@@ -408,6 +408,7 @@ function blurInPlace(c: HTMLCanvasElement, radius: number) {
 // ---------- Overlay effects ----------
 /** Soft focus: a blurred copy laid over the photo, plus a lighten pass so highlights halo like a diffusion filter. */
 function applySoften(c: HTMLCanvasElement, amount: number, radius: number) {
+  if (radius < 0.5) return; // laying an unblurred copy over the photo changes nothing
   const a = amount / 100;
   const soft = scratchCanvas("soften", c.width, c.height);
   const sctx = ctx2d(soft);
@@ -439,7 +440,7 @@ function applyGlow(c: HTMLCanvasElement, amount: number, radius: number) {
     d[i + 2] = (d[i + 2] - 120) * 1.7;
   }
   sctx.putImageData(img, 0, 0);
-  blurInPlace(small, Math.max(1, (radius * sh) / c.height));
+  if (radius > 0) blurInPlace(small, Math.max(1, (radius * sh) / c.height));
   const ctx = ctx2d(c);
   ctx.save();
   ctx.globalCompositeOperation = "screen";
@@ -532,9 +533,11 @@ export function renderBase(target: HTMLCanvasElement, src: ImageSource, doc: Edi
   drawPanels(target, src, doc, size);
 
   colourPass(target, f, f.rgbSplit * ref);
-  if (f.soften > 0) applySoften(target, f.soften, f.softenBlur * ref);
-  if (f.blur > 0) blurInPlace(target, f.blur * ref);
-  if (f.glow > 0) applyGlow(target, f.glow, f.glowBlur * ref);
+  // The Blur meter scales all three blurs together; at 0 the look keeps its colour but loses its softness.
+  const blurPx = ref * (f.blurScale / 100);
+  if (f.soften > 0) applySoften(target, f.soften, f.softenBlur * blurPx);
+  if (f.blur > 0) blurInPlace(target, f.blur * blurPx);
+  if (f.glow > 0) applyGlow(target, f.glow, f.glowBlur * blurPx);
 
   ctx.save();
   if (f.vignette > 0) {
