@@ -9,10 +9,13 @@ import {
   EFFECT_SLIDERS,
   FRAMES,
   LAYOUTS,
+  PIXEL_MIN,
+  PIXEL_TWIN_BLOCK,
   SEAMS,
   SPLIT_MAX,
   SPLIT_MIN,
   SPLIT_TONES,
+  pixelSize,
   splitToneSwatch,
 } from "../defaults";
 import type { Composition, EditorDoc, Filters, LayoutId } from "../types";
@@ -143,16 +146,18 @@ export function AdjustPanel({ doc, disabled, onFilter, onCommit, onResetFilters 
           sliders.map((s) => {
             const parent = s.parent ? sliders.find((p) => p.key === s.parent) : undefined;
             const off = parent !== undefined && f[parent.key] === 0;
+            // In Pixel Twin the twin photo is always pixelated, so show the block size it really uses.
+            const twinPixels = s.key === "pixelate" && doc.layout === "pixel_twin";
             return (
               <Slider
                 key={s.key}
-                label={s.label}
-                value={f[s.key]}
-                min={s.min}
+                label={twinPixels ? "Pixelate (twin photo)" : s.label}
+                value={twinPixels ? pixelSize(doc.layout, f) : f[s.key]}
+                min={twinPixels ? PIXEL_MIN : s.min}
                 max={s.max}
                 step={s.step}
                 unit={s.unit}
-                defaultValue={DEFAULT_FILTERS[s.key]}
+                defaultValue={twinPixels ? PIXEL_TWIN_BLOCK : DEFAULT_FILTERS[s.key]}
                 sub={parent !== undefined}
                 disabled={off}
                 hint={off ? `Turn up ${parent.label} to use this` : undefined}

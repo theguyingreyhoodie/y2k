@@ -11,7 +11,6 @@ export const DEFAULT_FILTERS: Filters = {
   sepia: 0,
   grayscale: 0,
   blur: 0,
-  blurScale: 100,
   soften: 0,
   softenBlur: 12,
   pixelate: 0,
@@ -51,14 +50,22 @@ export function newDoc(): EditorDoc {
   };
 }
 
-/** The look has some blur in it, so the Blur meter under the canvas has something to turn up or down. */
-export function hasBlur(f: Filters): boolean {
-  return f.blur > 0 || f.soften > 0 || f.glow > 0;
+/** Block size of the Pixel Twin's pixelated panel when the look doesn't set one. */
+export const PIXEL_TWIN_BLOCK = 14;
+export const PIXEL_MIN = 2;
+export const PIXEL_MAX = 60;
+
+/**
+ * Pixel block size on screen, at a 1000px-tall reference: the twin panel's in Pixel Twin, the whole photo's
+ * in the other layouts. 0 when nothing is pixelated.
+ */
+export function pixelSize(layout: LayoutId, f: Pick<Filters, "pixelate">): number {
+  if (layout === "pixel_twin") return f.pixelate > 0 ? f.pixelate : PIXEL_TWIN_BLOCK;
+  return f.pixelate;
 }
-export const BLUR_SCALE_MAX = 200;
 
 export interface SliderSpec {
-  key: Exclude<keyof Filters, "duotone" | "splitTone" | "blurScale">;
+  key: Exclude<keyof Filters, "duotone" | "splitTone">;
   label: string;
   min: number;
   max: number;

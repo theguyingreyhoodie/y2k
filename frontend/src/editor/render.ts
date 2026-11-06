@@ -5,7 +5,7 @@
  * Every size-dependent effect (blur radii, pixel blocks, RGB split, grain, scanlines) is expressed
  * relative to a 1000px-tall panel, so a 300px preview and a 2400px export look the same.
  */
-import { DUOTONES, FRAMES, SPLIT_TONES } from "./defaults";
+import { DUOTONES, FRAMES, SPLIT_TONES, pixelSize } from "./defaults";
 import { ensureFonts, fontsIn } from "./fonts";
 import { preloadStickers, stickerImage } from "./stickers";
 import { drawTextOverlay, measureTextOverlay } from "./text";
@@ -171,8 +171,9 @@ function drawPanels(target: HTMLCanvasElement, src: ImageSource, doc: EditorDoc,
     const tctx = ctx2d(tile);
     drawCover(tctx, src, doc, w, H, doc.compose[slotOf(panel)], panel.kind === "mirror");
 
-    const pixelBlock =
-      panel.kind === "pixel" ? Math.max(2, (f.pixelate > 0 ? f.pixelate : 14) * ref) : doc.layout !== "pixel_twin" && f.pixelate > 0 ? Math.max(2, f.pixelate * ref) : 0;
+    // Pixel Twin pixelates only its second panel; the other layouts pixelate every panel.
+    const block = panel.kind === "pixel" ? pixelSize(doc.layout, f) : doc.layout === "pixel_twin" ? 0 : f.pixelate;
+    const pixelBlock = block > 0 ? Math.max(2, block * ref) : 0;
     if (pixelBlock) {
       const pix = scratchCanvas("panel-pixels", w, H);
       drawPixelated(ctx2d(pix), tile, 0, w, H, pixelBlock);
@@ -533,11 +534,9 @@ export function renderBase(target: HTMLCanvasElement, src: ImageSource, doc: Edi
   drawPanels(target, src, doc, size);
 
   colourPass(target, f, f.rgbSplit * ref);
-  // The Blur meter scales all three blurs together; at 0 the look keeps its colour but loses its softness.
-  const blurPx = ref * (f.blurScale / 100);
-  if (f.soften > 0) applySoften(target, f.soften, f.softenBlur * blurPx);
-  if (f.blur > 0) blurInPlace(target, f.blur * blurPx);
-  if (f.glow > 0) applyGlow(target, f.glow, f.glowBlur * blurPx);
+  if (f.soften > 0) applySoften(target, f.soften, f.softenBlur * ref);
+  if (f.blur > 0) blurInPlace(target, f.blur * ref);
+  if (f.glow > 0) applyGlow(target, f.glow, f.glowBlur * ref);
 
   ctx.save();
   if (f.vignette > 0) {
