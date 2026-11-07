@@ -174,10 +174,10 @@ export const PRESETS: Preset[] = [
     layout: "pixel_twin",
     compose: { split: 0.66, swap: true },
     stickers: [
-      { ref: "builtin:star_girl", x: 0.3, y: 0.15, size: 0.2, rotation: -6 },
       { ref: "builtin:chrome_sparkle", x: 0.86, y: 0.78, size: 0.22 },
       { ref: "builtin:twin_stars", x: 0.14, y: 0.82, size: 0.18 },
     ],
+    texts: [{ text: "star girl", font: "unbounded", style: "chrome", x: 0.32, y: 0.14, size: 0.07, rotation: -6 }],
   },
   {
     id: "scrapbook",
@@ -254,7 +254,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 106, contrast: 104, saturation: 138, hue: -8, glow: 34, duotone: "aqua", duotoneAmount: 16 },
     layout: "single",
     stickers: [
-      { ref: "builtin:green_sparkle", x: 0.8, y: 0.2, size: 0.13 },
+      { ref: "builtin:green_star", x: 0.8, y: 0.2, size: 0.13, rotation: 12 },
       { ref: "builtin:clover", x: 0.14, y: 0.76, size: 0.14, rotation: -10 },
     ],
   },
