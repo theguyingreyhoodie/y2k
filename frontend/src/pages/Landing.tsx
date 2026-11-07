@@ -167,24 +167,24 @@ function TextSample({ text, style, font, rotate = 0 }: { text: string; style: Te
 
 // Stickers live in the gutters either side of the centred panel (x is the left edge, in %).
 const WALL = [
-  { key: "heart_glossy", x: 4, y: 10, s: 112, r: -12 },
-  { key: "cd", x: 12, y: 44, s: 124, r: 0 },
-  { key: "flame", x: 3, y: 70, s: 74, r: -10 },
-  { key: "sparkle", x: 15, y: 16, s: 58, r: 0 },
-  { key: "butterfly", x: 11, y: 76, s: 112, r: 10 },
-  { key: "flip_phone", x: 82, y: 8, s: 70, r: 10 },
-  { key: "star_chrome", x: 90, y: 30, s: 96, r: 14 },
-  { key: "bow", x: 80, y: 50, s: 120, r: -6 },
-  { key: "smiley", x: 91, y: 66, s: 84, r: 8 },
-  { key: "pixel_heart", x: 82, y: 80, s: 72, r: 0 },
-  { key: "cherry", x: 3, y: 30, s: 70, r: -14 },
-  { key: "lightning", x: 92, y: 4, s: 56, r: 18 },
+  { key: "red_lips", x: 4, y: 10, s: 112, r: -12 },
+  { key: "disco_ball", x: 12, y: 44, s: 124, r: 0 },
+  { key: "anger_vein", x: 3, y: 70, s: 74, r: -10 },
+  { key: "chrome_sparkle", x: 15, y: 16, s: 58, r: 0 },
+  { key: "red_butterfly", x: 11, y: 76, s: 112, r: 10 },
+  { key: "arrow_cursor", x: 83, y: 6, s: 52, r: 10 },
+  { key: "retro_star", x: 90, y: 30, s: 96, r: 14 },
+  { key: "pink_bow", x: 80, y: 50, s: 104, r: -6 },
+  { key: "green_cat", x: 91, y: 66, s: 84, r: 8 },
+  { key: "blue_pixel_heart", x: 82, y: 80, s: 72, r: 0 },
+  { key: "glossy_cherries", x: 3, y: 30, s: 70, r: -14 },
+  { key: "green_sparkle", x: 92, y: 4, s: 64, r: 18 },
 ];
 
 export default function Landing() {
   const { user } = useAuth();
   const start = user ? "/editor" : "/register?next=%2Feditor";
-  const fileOf = (key: string) => BUILTIN_STICKERS.find((s) => s.key === key)?.file ?? "sparkle.svg";
+  const fileOf = (key: string) => BUILTIN_STICKERS.find((s) => s.key === key)?.file ?? "chrome_sparkle.webp";
 
   return (
     <main className="landing" id="main">
@@ -242,7 +242,7 @@ export default function Landing() {
           </p>
         </div>
         <div className="twins__demos">
-          <LayoutDemo presetId="icon" title="pixel_twin.png" caption="Icon Twin: clean on the left, pixels on the right, chrome star on the seam." />
+          <LayoutDemo presetId="icon" title="pixel_twin.png" caption="Icon Twin: clean on the left, pixels on the right, chrome sparkle on the seam." />
           <LayoutDemo presetId="illegal" title="mirror_twin.png" caption="“Is this illegal?”: a mirror twin with horror-red text." />
         </div>
       </section>

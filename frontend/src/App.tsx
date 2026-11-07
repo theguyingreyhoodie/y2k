@@ -33,7 +33,7 @@ function NotFound() {
   return (
     <main className="page share share--missing" id="main">
       <Window title="404.exe" className="share__window" bodyClassName="share__missing">
-        <img src="/stickers/error_window.svg" alt="" width={220} />
+        <img src="/stickers/hanging_spider.webp" alt="" width={110} height={176} />
         <h1>Page not found.</h1>
         <p>That link went somewhere that doesn't exist.</p>
         <Link to="/" className="btn">

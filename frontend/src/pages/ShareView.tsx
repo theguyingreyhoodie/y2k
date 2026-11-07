@@ -45,7 +45,7 @@ export default function ShareView() {
     return (
       <main className="page share share--missing" id="main">
         <Window title="404.exe" className="share__window" bodyClassName="share__missing">
-          <img src="/stickers/error_window.svg" alt="" width={220} />
+          <img src="/stickers/hanging_spider.webp" alt="" width={110} height={176} />
           <h1>This edit isn't here.</h1>
           <p>It was made private or deleted. Make one of your own instead.</p>
           <Link to={user ? "/editor" : "/register"} className="btn">

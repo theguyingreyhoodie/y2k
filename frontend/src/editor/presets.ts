@@ -54,7 +54,7 @@ export const PRESETS: Preset[] = [
     label: "Icon Twin",
     filters: { contrast: 110, saturation: 95, grain: 16, pixelate: 16 },
     layout: "pixel_twin",
-    stickers: [{ ref: "builtin:star_chrome", x: 0.5, y: 0.5, size: 0.2 }],
+    stickers: [{ ref: "builtin:chrome_sparkle", x: 0.5, y: 0.5, size: 0.22 }],
   },
   // ---- Looks from the icon-edit board: pixel twins, old phone filters, night and grunge ----
   {
@@ -69,7 +69,8 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 80, contrast: 132, saturation: 62, warmth: -6, splitTone: "midnight", splitAmount: 55, vignette: 46, grain: 16, pixelate: 26 },
     layout: "pixel_twin",
     compose: { split: 0.6, swap: true },
-    stickers: [{ ref: "builtin:thorn_sigil", x: 0.4, y: 0.3, size: 0.3 }],
+    // hangs from the top edge on its thread
+    stickers: [{ ref: "builtin:hanging_spider", x: 0.4, y: 0.19, size: 0.38 }],
   },
   {
     id: "night_flash",
@@ -84,10 +85,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 92, contrast: 108, saturation: 70, soften: 60, glow: 26, blur: 1.5, splitTone: "rose", splitAmount: 40, grain: 18, pixelate: 22 },
     layout: "pixel_twin",
     compose: { split: 0.68 },
-    stickers: [
-      { ref: "builtin:lace_strip", x: 0.68, y: 0.5, size: 1.02, opacity: 0.65 },
-      { ref: "builtin:focus_box", x: 0.4, y: 0.42, size: 0.15 },
-    ],
+    stickers: [{ ref: "builtin:red_lips", x: 0.76, y: 0.24, size: 0.2, rotation: -8 }],
     texts: [{ text: "#SWAG", font: "poster", style: "glitter", x: 0.19, y: 0.89, size: 0.12 }],
   },
   {
@@ -96,7 +94,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 108, contrast: 84, saturation: 72, fade: 70, warmth: 6, soften: 30, glow: 10, pixelate: 24 },
     layout: "pixel_twin",
     compose: { split: 0.62, seam: "fade" },
-    stickers: [{ ref: "builtin:grey_stars", x: 0.5, y: 0.2, size: 0.24 }],
+    stickers: [{ ref: "builtin:print_star", x: 0.5, y: 0.2, size: 0.24 }],
   },
   {
     id: "noir_twin",
@@ -111,7 +109,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 96, contrast: 134, saturation: 112, warmth: 34, splitTone: "ember", splitAmount: 75, vignette: 64, glow: 8, pixelate: 28 },
     layout: "pixel_twin",
     compose: { split: 0.62 },
-    stickers: [{ ref: "builtin:cross_ornate", x: 0.62, y: 0.62, size: 0.3 }],
+    stickers: [{ ref: "builtin:fingerprint_heart", x: 0.62, y: 0.62, size: 0.24 }],
   },
   {
     id: "camcorder",
@@ -123,7 +121,7 @@ export const PRESETS: Preset[] = [
       { text: camcorderStamp, font: "vcr", style: "vhs", x: 0.24, y: 0.9, size: 0.058 },
       { text: "are you real?", font: "plain", style: "echo", x: 0.76, y: 0.82, size: 0.042 },
     ],
-    stickers: [{ ref: "builtin:star_eyes", x: 0.5, y: 0.76, size: 0.16 }],
+    stickers: [{ ref: "builtin:life_hearts", x: 0.5, y: 0.7, size: 0.07 }],
   },
   {
     id: "golden_grain",
@@ -132,8 +130,8 @@ export const PRESETS: Preset[] = [
     layout: "twin",
     compose: { split: 0.54 },
     stickers: [
-      { ref: "builtin:i_heart_me", x: 0.38, y: 0.82, size: 0.26 },
-      { ref: "builtin:cracked_glass", x: 0.74, y: 0.55, size: 0.3, opacity: 0.9 },
+      { ref: "builtin:favorite_person", x: 0.36, y: 0.84, size: 0.18, rotation: -4 },
+      { ref: "builtin:kiss_marks", x: 0.78, y: 0.2, size: 0.2, rotation: 10 },
     ],
   },
   {
@@ -142,7 +140,7 @@ export const PRESETS: Preset[] = [
     filters: { warmth: 26, tint: 4, fade: 14, contrast: 108, saturation: 82, vignette: 36, soften: 12 },
     layout: "twin",
     compose: { split: 0.64 },
-    stickers: [{ ref: "builtin:exclaim_hearts", x: 0.5, y: 0.17, size: 0.2 }],
+    stickers: [{ ref: "builtin:excited_marks", x: 0.5, y: 0.17, size: 0.2 }],
     texts: [{ text: "you're under arrest", font: "serif", style: "caption", x: 0.52, y: 0.86, size: 0.085 }],
   },
   {
@@ -163,8 +161,9 @@ export const PRESETS: Preset[] = [
     layout: "pixel_twin",
     compose: { split: 0.62 },
     stickers: [
-      { ref: "builtin:exclaim_bold", x: 0.5, y: 0.12, size: 0.14 },
-      { ref: "builtin:pixel_skull", x: 0.64, y: 0.5, size: 0.15 },
+      { ref: "builtin:anger_vein", x: 0.66, y: 0.15, size: 0.14 },
+      // hovering over the "whatever" tooltip
+      { ref: "builtin:arrow_cursor", x: 0.58, y: 0.72, size: 0.12 },
     ],
     texts: [{ text: "whatever", font: "plain", style: "tooltip", x: 0.38, y: 0.8, size: 0.05 }],
   },
@@ -175,9 +174,9 @@ export const PRESETS: Preset[] = [
     layout: "pixel_twin",
     compose: { split: 0.66, swap: true },
     stickers: [
-      { ref: "builtin:star_trail", x: 0.32, y: 0.3, size: 0.52 },
-      { ref: "builtin:cartoon_face", x: 0.88, y: 0.17, size: 0.2 },
-      { ref: "builtin:cross_outline", x: 0.13, y: 0.82, size: 0.24 },
+      { ref: "builtin:star_girl", x: 0.3, y: 0.15, size: 0.2, rotation: -6 },
+      { ref: "builtin:chrome_sparkle", x: 0.86, y: 0.78, size: 0.22 },
+      { ref: "builtin:twin_stars", x: 0.14, y: 0.82, size: 0.18 },
     ],
   },
   {
@@ -187,8 +186,9 @@ export const PRESETS: Preset[] = [
     layout: "pixel_twin",
     compose: { split: 0.6, seam: "fade" },
     stickers: [
-      { ref: "builtin:doodle_stars", x: 0.56, y: 0.2, size: 0.26 },
-      { ref: "builtin:shock_lines", x: 0.08, y: 0.18, size: 0.13 },
+      { ref: "builtin:paper_star", x: 0.56, y: 0.2, size: 0.24, rotation: 8 },
+      // taped down at the corner
+      { ref: "builtin:blue_tape", x: 0.08, y: 0.06, size: 0.1, rotation: -35 },
     ],
   },
   {
@@ -205,7 +205,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 106, contrast: 112, saturation: 58, warmth: 4, tint: 6, fade: 8, soften: 40, glow: 22, vignette: 20 },
     layout: "twin",
     compose: { seam: "line" },
-    stickers: [{ ref: "builtin:advisory_warped", x: 0.5, y: 0.8, size: 0.17 }],
+    stickers: [{ ref: "builtin:parental_advisory", x: 0.5, y: 0.8, size: 0.15 }],
   },
   // ---- The original set ----
   {
@@ -219,14 +219,14 @@ export const PRESETS: Preset[] = [
     label: "Sacred Mono",
     filters: { grayscale: 100, contrast: 132, brightness: 96, grain: 14, vignette: 34 },
     layout: "single",
-    stickers: [{ ref: "builtin:cross_gothic", x: 0.84, y: 0.8, size: 0.2, rotation: 8 }],
+    stickers: [{ ref: "builtin:red_butterfly", x: 0.82, y: 0.8, size: 0.24, rotation: 8 }],
   },
   {
     id: "pixel_pop",
     label: "Pixel Pop",
     filters: { saturation: 135, contrast: 112, pixelate: 11 },
     layout: "single",
-    stickers: [{ ref: "builtin:pixel_bunny", x: 0.16, y: 0.84, size: 0.16 }],
+    stickers: [{ ref: "builtin:blue_pixel_heart", x: 0.16, y: 0.84, size: 0.16 }],
   },
   {
     id: "advisory",
@@ -254,8 +254,8 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 106, contrast: 104, saturation: 138, hue: -8, glow: 34, duotone: "aqua", duotoneAmount: 16 },
     layout: "single",
     stickers: [
-      { ref: "builtin:bubble", x: 0.82, y: 0.2, size: 0.17 },
-      { ref: "builtin:bubble", x: 0.14, y: 0.74, size: 0.1 },
+      { ref: "builtin:green_sparkle", x: 0.8, y: 0.2, size: 0.13 },
+      { ref: "builtin:clover", x: 0.14, y: 0.76, size: 0.14, rotation: -10 },
     ],
   },
   {
@@ -270,8 +270,8 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 108, saturation: 148, hue: 10, glow: 46, duotone: "bubblegum", duotoneAmount: 12 },
     layout: "single",
     stickers: [
-      { ref: "builtin:sparkle", x: 0.8, y: 0.22, size: 0.15 },
-      { ref: "builtin:sparkle", x: 0.18, y: 0.66, size: 0.1, rotation: 12 },
+      { ref: "builtin:chrome_sparkle", x: 0.8, y: 0.22, size: 0.17 },
+      { ref: "builtin:chrome_sparkle", x: 0.18, y: 0.66, size: 0.11, rotation: 12 },
     ],
   },
   {
@@ -286,7 +286,7 @@ export const PRESETS: Preset[] = [
     label: "Chrome",
     filters: { grayscale: 100, contrast: 128, brightness: 104, glow: 22 },
     layout: "single",
-    stickers: [{ ref: "builtin:chrome_rockstar", x: 0.8, y: 0.2, size: 0.16, rotation: -10 }],
+    stickers: [{ ref: "builtin:disco_ball", x: 0.8, y: 0.2, size: 0.2, rotation: -10 }],
   },
 ];
 

@@ -220,7 +220,7 @@ A 4:5 thumbnail of the user's own photo rendered through the real engine with th
 ### Do:
 - **Do** put every panel, dialog and card in a program window with a filename title (`share.exe`, `readme.txt`).
 - **Do** keep white labels only on the deepened jelly colours (#0a7bbd, #d4179f), so they pass 4.5:1.
-- **Do** draw icons from Lucide or as authored SVG; stickers are authored SVG or PNG assets.
+- **Do** draw icons from Lucide or as authored SVG; stickers are SVG, PNG or WebP assets with transparent backgrounds.
 - **Do** keep the photo the most saturated thing on the editor screen.
 - **Do** respect `prefers-reduced-motion`: bubbles, marquee and the scan-in reel all settle.
 

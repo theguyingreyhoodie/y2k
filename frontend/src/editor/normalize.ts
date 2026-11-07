@@ -1,4 +1,5 @@
 import { DEFAULT_COMPOSE, DEFAULT_FILTERS, FONTS, FRAMES, SEAMS, SPLIT_MAX, SPLIT_MIN, TEXT_STYLES, ZOOM_MAX, newDoc } from "./defaults";
+import { isKnownSticker } from "./stickers";
 import type { Crop, EditorDoc, Filters, FontId, FrameId, LayoutId, Overlay, Rotation, SeamId, TextStyleId } from "./types";
 
 const num = (v: unknown, fallback: number, min: number, max: number) =>
@@ -63,6 +64,8 @@ export function normalizeDoc(raw: unknown): EditorDoc {
       auto: o.auto === true,
     };
     if (o.kind === "sticker" && typeof o.ref === "string") {
+      // A built-in that has left the library would be an invisible layer, so it's dropped.
+      if (!isKnownSticker(o.ref)) return [];
       return [{ ...base, kind: "sticker", ref: o.ref, flipX: o.flipX === true }];
     }
     if (o.kind === "text" && typeof o.text === "string") {
