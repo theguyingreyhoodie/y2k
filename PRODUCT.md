@@ -50,7 +50,7 @@ No AI. Every look is deterministic canvas processing in the browser, and the pho
 
 ## Evidence on Hand
 
-- Built-in stickers (`frontend/public/stickers/`): the parental advisory PNG from the original repo, a drawn moustache, and 48 cut-outs of sticker images the owner collected on Pinterest.
+- Built-in stickers (`frontend/public/stickers/`): the parental advisory PNG from the original repo, a drawn moustache, and 41 cut-outs of sticker images the owner collected on Pinterest. Those designs belong to their original artists.
 - Sample portrait from Unsplash (photo-1581841064838-a470c740e8ee), referenced by the original design guidelines (`frontend/public/samples/portrait.jpg`).
 - No testimonials, user counts, ratings or press exist. Don't invent any.
 

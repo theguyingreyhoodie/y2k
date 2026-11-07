@@ -30,7 +30,6 @@ export const BUILTIN_STICKERS: BuiltinSticker[] = [
   { key: "print_star", label: "Halftone star", file: "print_star.webp", group: "stars", tile: "light" },
   { key: "chrome_sparkle", label: "Chrome sparkle", file: "chrome_sparkle.webp", group: "stars" },
   { key: "green_star", label: "Green star", file: "green_star.webp", group: "stars" },
-  { key: "green_sparkle", label: "Green sparkle", file: "green_sparkle.webp", group: "stars" },
   // Hearts & kisses
   { key: "blue_pixel_heart", label: "Blue pixel heart", file: "blue_pixel_heart.png", group: "love" },
   { key: "life_hearts", label: "Pixel hearts", file: "life_hearts.webp", group: "love" },
@@ -43,10 +42,8 @@ export const BUILTIN_STICKERS: BuiltinSticker[] = [
   // Flowers & cute
   { key: "red_butterfly", label: "Red butterfly", file: "red_butterfly.webp", group: "cute" },
   { key: "cherry_bow", label: "Cherry bow", file: "cherry_bow.webp", group: "cute" },
-  { key: "glossy_cherries", label: "Cherries", file: "glossy_cherries.webp", group: "cute" },
   { key: "red_lily", label: "Lily", file: "red_lily.webp", group: "cute" },
   { key: "bouquet", label: "Bouquet", file: "bouquet.webp", group: "cute" },
-  { key: "tulips", label: "Tulips", file: "tulips.webp", group: "cute" },
   { key: "pink_bow", label: "Pink bow", file: "pink_bow.webp", group: "cute" },
   { key: "clover", label: "Clover", file: "clover.webp", group: "cute" },
   { key: "green_cat", label: "Green cat", file: "green_cat.webp", group: "cute" },
@@ -55,8 +52,6 @@ export const BUILTIN_STICKERS: BuiltinSticker[] = [
   { key: "favorite_person", label: "Favorite person", file: "favorite_person.webp", group: "words" },
   { key: "memories_plate", label: "Memories plate", file: "memories_plate.webp", group: "words" },
   { key: "young_dumb_broke", label: "Young dumb & broke", file: "young_dumb_broke.webp", group: "words" },
-  { key: "star_girl", label: "Star girl", file: "star_girl.webp", group: "words" },
-  { key: "certified_yapper", label: "Certified yapper", file: "certified_yapper.webp", group: "words" },
   // Faces & marks
   { key: "moustache", label: "Moustache", file: "moustache.svg", group: "marks", tile: "light" },
   { key: "anger_vein", label: "Anger mark", file: "anger_vein.webp", group: "marks" },
@@ -71,10 +66,8 @@ export const BUILTIN_STICKERS: BuiltinSticker[] = [
   // Y2K & party
   { key: "disco_ball", label: "Disco ball", file: "disco_ball.webp", group: "party" },
   { key: "disco_stars", label: "Disco stars", file: "disco_stars.webp", group: "party" },
-  { key: "pink_disco", label: "Pink disco", file: "pink_disco.webp", group: "party" },
   { key: "arrow_cursor", label: "Cursor", file: "arrow_cursor.png", group: "party" },
   { key: "red_guitar", label: "Guitar", file: "red_guitar.webp", group: "party" },
-  { key: "all_star_patch", label: "All Star patch", file: "all_star_patch.webp", group: "party" },
   { key: "hanging_spider", label: "Spider", file: "hanging_spider.webp", group: "party" },
   { key: "birthday_cake", label: "Birthday cake", file: "birthday_cake.webp", group: "party" },
 ];

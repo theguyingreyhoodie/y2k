@@ -177,8 +177,8 @@ const WALL = [
   { key: "pink_bow", x: 80, y: 50, s: 104, r: -6 },
   { key: "green_cat", x: 91, y: 66, s: 84, r: 8 },
   { key: "blue_pixel_heart", x: 82, y: 80, s: 72, r: 0 },
-  { key: "glossy_cherries", x: 3, y: 30, s: 70, r: -14 },
-  { key: "green_sparkle", x: 92, y: 4, s: 64, r: 18 },
+  { key: "cherry_bow", x: 3, y: 30, s: 70, r: -14 },
+  { key: "green_star", x: 92, y: 4, s: 64, r: 18 },
 ];
 
 export default function Landing() {
