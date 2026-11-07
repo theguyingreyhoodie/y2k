@@ -481,7 +481,7 @@ export default function Editor() {
   const emptyState = (
     <div className="dropzone">
       <div className="dropzone__inner">
-        <img className="dropzone__sticker" src="/stickers/sparkle.svg" alt="" width={72} height={72} />
+        <img className="dropzone__sticker" src="/stickers/chrome_sparkle.webp" alt="" width={59} height={72} />
         <h2 className="dropzone__title">Drop a photo here</h2>
         <p className="dropzone__hint">JPG, PNG or WebP, up to 25 MB. It stays in your browser until you save.</p>
         <div className="dropzone__actions">

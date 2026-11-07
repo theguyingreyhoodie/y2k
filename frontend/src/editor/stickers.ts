@@ -1,12 +1,13 @@
-export type StickerGroup = "faces" | "stars" | "marks" | "grunge" | "flowers" | "y2k";
+export type StickerGroup = "stars" | "love" | "cute" | "words" | "marks" | "scraps" | "party";
 
 export const STICKER_GROUPS: { id: StickerGroup; label: string }[] = [
-  { id: "faces", label: "Faces & props" },
   { id: "stars", label: "Stars & sparkles" },
-  { id: "marks", label: "Marks & signs" },
-  { id: "grunge", label: "Gothic & grunge" },
-  { id: "flowers", label: "Flowers & cute" },
-  { id: "y2k", label: "Y2K tech" },
+  { id: "love", label: "Hearts & kisses" },
+  { id: "cute", label: "Flowers & cute" },
+  { id: "words", label: "Words & signs" },
+  { id: "marks", label: "Faces & marks" },
+  { id: "scraps", label: "Tape & scraps" },
+  { id: "party", label: "Y2K & party" },
 ];
 
 export interface BuiltinSticker {
@@ -19,70 +20,72 @@ export interface BuiltinSticker {
 }
 
 export const BUILTIN_STICKERS: BuiltinSticker[] = [
-  // Faces & props
-  { key: "moustache", label: "Moustache", file: "moustache.svg", group: "faces", tile: "light" },
-  { key: "nerd_glasses", label: "Nerd glasses", file: "nerd_glasses.svg", group: "faces", tile: "light" },
-  { key: "dog_ears", label: "Dog ears", file: "dog_ears.svg", group: "faces" },
-  { key: "dog_nose", label: "Dog nose", file: "dog_nose.svg", group: "faces" },
-  { key: "emoticon_d", label: ":D", file: "emoticon_d.svg", group: "faces" },
-  { key: "cartoon_face", label: "Cartoon face", file: "cartoon_face.svg", group: "faces" },
-  { key: "smiley", label: "Smiley", file: "smiley.svg", group: "faces" },
-  { key: "nerd_face", label: "Nerd face", file: "nerd_face.svg", group: "faces" },
-  { key: "happy_cat", label: "Happy cat", file: "happy_cat.svg", group: "faces" },
-  { key: "ghost", label: "Ghost", file: "ghost.svg", group: "faces" },
   // Stars & sparkles
-  { key: "doodle_stars", label: "Doodle stars", file: "doodle_stars.svg", group: "stars" },
-  { key: "star_trail", label: "Star trail", file: "star_trail.svg", group: "stars" },
-  { key: "grey_stars", label: "Grey stars", file: "grey_stars.svg", group: "stars" },
-  { key: "star_eyes", label: "Cute star", file: "star_eyes.svg", group: "stars" },
-  { key: "star_chrome", label: "Chrome star", file: "star_chrome.svg", group: "stars" },
-  { key: "chrome_rockstar", label: "Rockstar", file: "chrome_rockstar.png", group: "stars" },
-  { key: "sparkle", label: "Sparkle", file: "sparkle.svg", group: "stars" },
-  { key: "halftone_star", label: "Halftone star", file: "halftone_star.png", group: "stars" },
-  { key: "dot_stars", label: "Dot stars", file: "dot_stars.png", group: "stars" },
-  // Marks & signs
-  { key: "exclaim_hearts", label: "!! hearts", file: "exclaim_hearts.svg", group: "marks" },
-  { key: "exclaim_bold", label: "!! bold", file: "exclaim_bold.svg", group: "marks" },
-  { key: "shock_lines", label: "Shock lines", file: "shock_lines.svg", group: "marks" },
-  { key: "surprise_marks", label: "Surprise marks", file: "surprise_marks.svg", group: "marks" },
-  { key: "crosshair", label: "Crosshair", file: "crosshair.svg", group: "marks" },
-  { key: "focus_box", label: "Focus box", file: "focus_box.svg", group: "marks" },
-  { key: "cracked_glass", label: "Cracked glass", file: "cracked_glass.svg", group: "marks", tile: "dark" },
-  { key: "i_heart_me", label: "I ♥ ME", file: "i_heart_me.png", group: "marks" },
-  { key: "flame", label: "Flame", file: "flame.svg", group: "marks" },
-  { key: "lightning", label: "Lightning", file: "lightning.svg", group: "marks" },
-  // Gothic & grunge
-  { key: "parental_advisory", label: "Advisory", file: "parental_advisory.png", group: "grunge" },
-  { key: "advisory_warped", label: "Warped advisory", file: "advisory_warped.png", group: "grunge" },
-  { key: "cross_gothic", label: "Gothic cross", file: "cross_gothic.svg", group: "grunge" },
-  { key: "cross_outline", label: "Spiked cross", file: "cross_outline.svg", group: "grunge" },
-  { key: "cross_ornate", label: "Silver cross", file: "cross_ornate.svg", group: "grunge" },
-  { key: "thorn_sigil", label: "Thorn sigil", file: "thorn_sigil.svg", group: "grunge" },
-  { key: "pixel_skull", label: "Pixel skull", file: "pixel_skull.svg", group: "grunge" },
-  { key: "lace_strip", label: "Lace strip", file: "lace_strip.svg", group: "grunge", tile: "dark" },
+  { key: "paper_star", label: "Paper star", file: "paper_star.webp", group: "stars" },
+  { key: "torn_star", label: "Torn star", file: "torn_star.webp", group: "stars" },
+  { key: "felt_star", label: "Felt star", file: "felt_star.webp", group: "stars" },
+  { key: "spiral_star", label: "Spiral star", file: "spiral_star.webp", group: "stars" },
+  { key: "retro_star", label: "Retro star", file: "retro_star.webp", group: "stars" },
+  { key: "twin_stars", label: "Twin stars", file: "twin_stars.webp", group: "stars", tile: "light" },
+  { key: "print_star", label: "Halftone star", file: "print_star.webp", group: "stars", tile: "light" },
+  { key: "chrome_sparkle", label: "Chrome sparkle", file: "chrome_sparkle.webp", group: "stars" },
+  { key: "green_star", label: "Green star", file: "green_star.webp", group: "stars" },
+  { key: "green_sparkle", label: "Green sparkle", file: "green_sparkle.webp", group: "stars" },
+  // Hearts & kisses
+  { key: "blue_pixel_heart", label: "Blue pixel heart", file: "blue_pixel_heart.png", group: "love" },
+  { key: "life_hearts", label: "Pixel hearts", file: "life_hearts.webp", group: "love" },
+  { key: "scribble_hearts", label: "Scribble hearts", file: "scribble_hearts.webp", group: "love" },
+  { key: "fingerprint_heart", label: "Fingerprint heart", file: "fingerprint_heart.webp", group: "love" },
+  { key: "heart_hands", label: "Heart hands", file: "heart_hands.webp", group: "love" },
+  { key: "kiss_marks", label: "Kiss marks", file: "kiss_marks.webp", group: "love" },
+  { key: "red_lips", label: "Red lips", file: "red_lips.webp", group: "love" },
+  { key: "navy_lips", label: "Navy lips", file: "navy_lips.webp", group: "love" },
   // Flowers & cute
-  { key: "daisy", label: "Daisy", file: "daisy.svg", group: "flowers" },
-  { key: "daisy_chain", label: "Daisy chain", file: "daisy_chain.svg", group: "flowers" },
-  { key: "flower_doodle", label: "Doodle flower", file: "flower_doodle.svg", group: "flowers" },
-  { key: "blossoms", label: "Blossoms", file: "blossoms.svg", group: "flowers" },
-  { key: "butterfly", label: "Butterfly", file: "butterfly.svg", group: "flowers" },
-  { key: "butterfly_blue", label: "Blue butterfly", file: "butterfly_blue.svg", group: "flowers" },
-  { key: "butterfly_ghost", label: "Glass butterfly", file: "butterfly_ghost.svg", group: "flowers", tile: "dark" },
-  { key: "heart_glossy", label: "Glossy heart", file: "heart_glossy.svg", group: "flowers" },
-  { key: "bow", label: "Bow", file: "bow.svg", group: "flowers" },
-  { key: "cherry", label: "Cherries", file: "cherry.svg", group: "flowers" },
-  // Y2K tech
-  { key: "bubble", label: "Bubble", file: "bubble.svg", group: "y2k" },
-  { key: "cd", label: "CD", file: "cd.svg", group: "y2k" },
-  { key: "flip_phone", label: "Flip phone", file: "flip_phone.svg", group: "y2k" },
-  { key: "pixel_heart", label: "Pixel heart", file: "pixel_heart.svg", group: "y2k" },
-  { key: "pixel_bunny", label: "Pixel bunny", file: "pixel_bunny.svg", group: "y2k" },
-  { key: "pixel_cursor", label: "Pixel cursor", file: "pixel_cursor.png", group: "y2k" },
-  { key: "loading_bar", label: "Loading bar", file: "loading_bar.svg", group: "y2k" },
-  { key: "error_window", label: "Error window", file: "error_window.svg", group: "y2k" },
+  { key: "red_butterfly", label: "Red butterfly", file: "red_butterfly.webp", group: "cute" },
+  { key: "cherry_bow", label: "Cherry bow", file: "cherry_bow.webp", group: "cute" },
+  { key: "glossy_cherries", label: "Cherries", file: "glossy_cherries.webp", group: "cute" },
+  { key: "red_lily", label: "Lily", file: "red_lily.webp", group: "cute" },
+  { key: "bouquet", label: "Bouquet", file: "bouquet.webp", group: "cute" },
+  { key: "tulips", label: "Tulips", file: "tulips.webp", group: "cute" },
+  { key: "pink_bow", label: "Pink bow", file: "pink_bow.webp", group: "cute" },
+  { key: "clover", label: "Clover", file: "clover.webp", group: "cute" },
+  { key: "green_cat", label: "Green cat", file: "green_cat.webp", group: "cute" },
+  // Words & signs
+  { key: "parental_advisory", label: "Advisory", file: "parental_advisory.png", group: "words" },
+  { key: "favorite_person", label: "Favorite person", file: "favorite_person.webp", group: "words" },
+  { key: "memories_plate", label: "Memories plate", file: "memories_plate.webp", group: "words" },
+  { key: "young_dumb_broke", label: "Young dumb & broke", file: "young_dumb_broke.webp", group: "words" },
+  { key: "star_girl", label: "Star girl", file: "star_girl.webp", group: "words" },
+  { key: "certified_yapper", label: "Certified yapper", file: "certified_yapper.webp", group: "words" },
+  // Faces & marks
+  { key: "moustache", label: "Moustache", file: "moustache.svg", group: "marks", tile: "light" },
+  { key: "anger_vein", label: "Anger mark", file: "anger_vein.webp", group: "marks" },
+  { key: "anger_trio", label: "Anger marks", file: "anger_trio.webp", group: "marks" },
+  { key: "excited_marks", label: "Excited marks", file: "excited_marks.webp", group: "marks" },
+  { key: "zzz", label: "Zzz", file: "zzz.webp", group: "marks" },
+  // Tape & scraps
+  { key: "blue_tape", label: "Blue tape", file: "blue_tape.webp", group: "scraps" },
+  { key: "green_tape", label: "Green tape", file: "green_tape.webp", group: "scraps" },
+  { key: "denim_scrap", label: "Denim scrap", file: "denim_scrap.webp", group: "scraps" },
+  { key: "paper_arrow", label: "Paper arrow", file: "paper_arrow.webp", group: "scraps" },
+  // Y2K & party
+  { key: "disco_ball", label: "Disco ball", file: "disco_ball.webp", group: "party" },
+  { key: "disco_stars", label: "Disco stars", file: "disco_stars.webp", group: "party" },
+  { key: "pink_disco", label: "Pink disco", file: "pink_disco.webp", group: "party" },
+  { key: "arrow_cursor", label: "Cursor", file: "arrow_cursor.png", group: "party" },
+  { key: "red_guitar", label: "Guitar", file: "red_guitar.webp", group: "party" },
+  { key: "all_star_patch", label: "All Star patch", file: "all_star_patch.webp", group: "party" },
+  { key: "hanging_spider", label: "Spider", file: "hanging_spider.webp", group: "party" },
+  { key: "birthday_cake", label: "Birthday cake", file: "birthday_cake.webp", group: "party" },
 ];
 
 const BUILTIN_BY_KEY = new Map(BUILTIN_STICKERS.map((s) => [s.key, s]));
+
+/** False for built-in refs whose sticker has been removed from the library; saved edits drop those layers. */
+export function isKnownSticker(ref: string): boolean {
+  const [kind, value] = ref.split(":", 2);
+  return kind !== "builtin" || BUILTIN_BY_KEY.has(value);
+}
 
 /** Custom stickers carry a version so a replaced file never hits a stale cache. */
 const customVersions = new Map<string, string>();

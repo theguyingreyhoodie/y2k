@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="486" height="512" viewBox="0 0 190 200">
-<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.35"/></filter></defs>
-<g transform="rotate(8 95 100)">
-<path d="M43 22 L81 22 L70 128 L54 128 Z M62 172.6 C43.8 161.4 48 147.4 62 155.1 C76 147.4 80.2 161.4 62 172.6 Z M109 22 L147 22 L136 128 L120 128 Z M128 172.6 C109.8 161.4 114 147.4 128 155.1 C142 147.4 146.2 161.4 128 172.6 Z" fill="#ffffff" stroke="#ffffff" stroke-width="34" stroke-linejoin="round" filter="url(#sh)"/>
-<path d="M43 22 L81 22 L70 128 L54 128 Z M62 172.6 C43.8 161.4 48 147.4 62 155.1 C76 147.4 80.2 161.4 62 172.6 Z M109 22 L147 22 L136 128 L120 128 Z M128 172.6 C109.8 161.4 114 147.4 128 155.1 C142 147.4 146.2 161.4 128 172.6 Z" fill="#ffffff" stroke="#0b0b0e" stroke-width="7" stroke-linejoin="round"/></g>
-</svg>
