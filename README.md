@@ -1,5 +1,14 @@
 # Y2KEDIT ★
 
+![React 19](https://img.shields.io/badge/React-19-20232a?logo=react&logoColor=61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![MongoDB + GridFS](https://img.shields.io/badge/MongoDB-GridFS-47a248?logo=mongodb&logoColor=white)
+![No AI](https://img.shields.io/badge/AI-none%2C%20just%20canvas%20maths-ff5fa2)
+
+[Features](#features) · [Stack](#stack) · [Run it locally](#run-it-locally) · [Tests](#tests) · [API](#api) · [Project layout](#project-layout) · [Credits](#credits)
+
 Make your photos hopelessly Y2K. Upload a photo, give it a whole look in one click (Frutiger Aero, Cybercore, Icon Twin, Lomo, Sacred Mono and more), tweak it with sliders, drop on stickers and chrome text, then download a PNG or save it to your gallery and share a link.
 
 No AI: every look is plain canvas maths running in your browser, and your photo only leaves the device when you save.
