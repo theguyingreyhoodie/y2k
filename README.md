@@ -1,5 +1,6 @@
 # Y2KEDIT ★
 
+[![CI](https://github.com/theguyingreyhoodie/y2k/actions/workflows/ci.yml/badge.svg)](https://github.com/theguyingreyhoodie/y2k/actions/workflows/ci.yml)
 ![React 19](https://img.shields.io/badge/React-19-20232a?logo=react&logoColor=61dafb)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)
@@ -88,6 +89,8 @@ In this mode FastAPI also writes Open Graph and Twitter card tags into `/share/<
 npm test           # 16 API tests against a throwaway `y2kedit_test` database
 npm run typecheck  # TypeScript
 ```
+
+GitHub Actions runs both on every push and pull request ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): the API tests on Python 3.12 and 3.14 against a MongoDB container, and the frontend typecheck and build.
 
 The API tests cover auth (register, lockout, the reset flow revoking old sessions), edits (lifecycle, GridFS cleanup, ownership, share links, bad uploads) and stickers (background cut-out, visibility and permissions).
 
