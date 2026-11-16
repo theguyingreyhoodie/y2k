@@ -7,7 +7,7 @@
 ![MongoDB + GridFS](https://img.shields.io/badge/MongoDB-GridFS-47a248?logo=mongodb&logoColor=white)
 ![No AI](https://img.shields.io/badge/AI-none%2C%20just%20canvas%20maths-ff5fa2)
 
-[Features](#features) · [Stack](#stack) · [Run it locally](#run-it-locally) · [Tests](#tests) · [API](#api) · [Project layout](#project-layout) · [Credits](#credits)
+[Features](#features) · [Stack](#stack) · [Run it locally](#run-it-locally) · [Tests](#tests) · [API](#api) · [Project layout](#project-layout) · [Credits](#credits) · [License](#license)
 
 Make your photos hopelessly Y2K. Upload a photo, give it a whole look in one click (Frutiger Aero, Cybercore, Icon Twin, Lomo, Sacred Mono and more), tweak it with sliders, drop on stickers and chrome text, then download a PNG or save it to your gallery and share a link.
 
@@ -136,3 +136,9 @@ This is a ground-up rewrite of the Emergent-generated version. The original coul
 - Icons: [Lucide](https://lucide.dev).
 - The parental advisory sticker comes from the original Y2KEDIT build and the moustache was drawn for this version. The other 41 stickers are cut out of sticker images collected on Pinterest: backgrounds removed, die-cut borders kept, and the two pixel-art ones redrawn on their pixel grid so they stay sharp.
 - Those 41 designs belong to their original artists and aren't licensed for reuse from this repo. If one of them is yours, [open an issue](https://github.com/theguyingreyhoodie/y2k/issues) and it'll be credited or taken down, whichever you prefer.
+
+## License
+
+The source code is released under the [MIT License](LICENSE).
+
+The licence covers the code only. It does not cover the third-party material listed under [Credits](#credits): the sticker images in `frontend/public/stickers/` (apart from `moustache.svg`, which was drawn for this project), the sample portrait, the fonts, and the photos that appear in the screenshots. Those stay under their own owners' terms.
