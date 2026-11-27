@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Link, useParams } from "react-router";
 import { Download, WandSparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Window } from "@/components/Window";
 import { api, downloadBlob, errorMessage, slugFilename, type PublicEdit } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useTitle } from "@/lib/title";
 import { presetLabel } from "@/editor/presets";
 
 export default function ShareView() {
@@ -18,15 +19,15 @@ export default function ShareView() {
     api
       .get<PublicEdit>(`/public/edits/${encodeURIComponent(slug)}`)
       .then((e) => {
-        if (!alive) return;
-        setEdit(e);
-        document.title = `${e.title} · Y2KEDIT`;
+        if (alive) setEdit(e);
       })
       .catch(() => alive && setMissing(true));
     return () => {
       alive = false;
     };
   }, [slug]);
+
+  useTitle(missing ? "Not found" : edit?.title);
 
   const image = edit ? `/api/public/edits/${encodeURIComponent(slug)}/image?v=${edit.version}` : "";
 
@@ -58,7 +59,7 @@ export default function ShareView() {
   }
 
   return (
-    <main className="page share" id="main">
+    <main className="page share" id="main" style={{ "--aspect": edit ? edit.width / edit.height : 0.8 } as CSSProperties}>
       <Window
         title={edit ? `${edit.title}.png` : "loading.png"}
         className="share__window"

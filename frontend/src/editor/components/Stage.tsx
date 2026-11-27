@@ -20,6 +20,21 @@ const PREVIEW_MAX_PIXELS = 1_600_000;
 const MIN_SIZE = 0.02;
 const MAX_SIZE = 1.6;
 
+/**
+ * How tall the photo may be, by layout. These breakpoints mirror the media queries in editor.css:
+ * - wide (over 1180px): three columns, the whole canvas window fits the viewport;
+ * - beside (860 to 1180px wide, 520px or taller): canvas on the left at full height, one panel on the right;
+ * - stacked (under 860px wide, 620px or taller): canvas pinned on top, so it takes under half the height
+ *   and always leaves the open panel about 200px;
+ * - anything shorter: an ordinary scrolling page, stage first.
+ */
+function stageMaxHeight(vw: number, vh: number): number {
+  if (vw > 1180) return Math.max(240, Math.min(vh - 250, 900));
+  if (vw >= 860 && vh >= 520) return Math.max(240, vh - 236);
+  if (vw < 860 && vh >= 620) return Math.min(Math.max(vh - 480, 190), vh * 0.46);
+  return Math.max(240, vh * 0.6);
+}
+
 type Patch = Partial<Pick<Overlay, "x" | "y" | "size" | "rotation">>;
 
 /** Arrange mode: the photos themselves are dragged and zoomed, and the divider between them moves. */
@@ -93,8 +108,7 @@ export function Stage({ arrange, source, doc, selectedId, onSelect, onChange, on
     if (!el) return;
     const measure = () => {
       const rect = el.getBoundingClientRect();
-      // Desktop: the whole canvas window (title, toolbar, status) fits the viewport. Narrow: leave room for panels.
-      const maxH = Math.max(240, Math.min(window.innerWidth < 1180 ? window.innerHeight * 0.6 : window.innerHeight - 250, 900));
+      const maxH = stageMaxHeight(window.innerWidth, window.innerHeight);
       let w = rect.width;
       let h = w / aspect;
       if (h > maxH) {

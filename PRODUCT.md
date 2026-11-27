@@ -50,7 +50,7 @@ No AI. Every look is deterministic canvas processing in the browser, and the pho
 
 ## Evidence on Hand
 
-- Built-in stickers (`frontend/public/stickers/`): the parental advisory PNG from the original repo, a drawn moustache, and 41 cut-outs of sticker images the owner collected on Pinterest. Those designs belong to their original artists.
+- Built-in stickers (`frontend/public/stickers/`): a deliberately small core of 18, all original to this project. One hand-written SVG (the moustache) and 17 drawn by code in `frontend/scripts/stickers/`. No third-party artwork; keep it that way when adding more. Everything else comes from user uploads, with an optional link in the sticker panel to a Pinterest board (`STICKER_BOARD_URL`).
 - Sample portrait from Unsplash (photo-1581841064838-a470c740e8ee), referenced by the original design guidelines (`frontend/public/samples/portrait.jpg`).
 - No testimonials, user counts, ratings or press exist. Don't invent any.
 

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
   Check,
   Download,
+  Eye,
   FlipHorizontal2,
   ImagePlus,
   Keyboard,
@@ -22,6 +23,7 @@ import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, downloadBlob, errorMessage, fetchBlob, type CustomSticker, type Edit } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useTitle } from "@/lib/title";
 import { DEFAULT_CROP, DEFAULT_FILTERS, EXPORT_MAX_SIDE, LAYOUTS, ZOOM_MAX, newDoc, pixelSize } from "@/editor/defaults";
 import { ensureFonts, fontsIn } from "@/editor/fonts";
 import { useHistory } from "@/editor/history";
@@ -50,6 +52,8 @@ const SHORTCUTS: [string, string][] = [
   ["[  ]", "Send backward / bring forward"],
   ["T", "Add text"],
   ["A", "Arrange: move and zoom the photos"],
+  ["\\ (hold)", "See the photo before the look"],
+  ["⌘ V", "Paste a photo from the clipboard"],
   ["Esc", "Deselect / finish arranging"],
   ["?", "This list"],
 ];
@@ -87,6 +91,9 @@ export default function Editor() {
   const [showKeys, setShowKeys] = useState(false);
   const [arranging, setArranging] = useState(false);
   const [arrangeSlot, setArrangeSlot] = useState<PanelSlot>("main");
+  const [comparing, setComparing] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [textFocus, setTextFocus] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // A saved edit is dirty when it differs from what was saved (undo back to it and it's clean again);
@@ -127,6 +134,15 @@ export default function Editor() {
       }
     },
     [startWith, setParams],
+  );
+
+  // A new photo starts a new edit, so ask first when that would throw away unsaved work.
+  const requestFile = useCallback(
+    (file: File) => {
+      if (dirty) setPendingFile(file);
+      else openFile(file);
+    },
+    [dirty, openFile],
   );
 
   const openSample = useCallback(async () => {
@@ -250,6 +266,7 @@ export default function Editor() {
       rotation: 0,
       opacity: 1,
     });
+    setTextFocus((n) => n + 1);
   }, [source, addOverlay]);
 
   const removeOverlay = useCallback(
@@ -415,6 +432,11 @@ export default function Editor() {
         stopArrange();
         return;
       }
+      if (key === "\\" && source) {
+        e.preventDefault();
+        setComparing(true);
+        return;
+      }
       if (key === "a" && source && !arranging) {
         e.preventDefault();
         startArrange();
@@ -447,9 +469,32 @@ export default function Editor() {
         nudgeTimer.current = window.setTimeout(history.commit, 400);
       }
     };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "\\") setComparing(false);
+    };
+    const onBlur = () => setComparing(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", onBlur);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("blur", onBlur);
+    };
   }, [save, history, duplicateOverlay, addText, source, selectedId, removeOverlay, reorder, doc.overlays, updateOverlay, arranging, stopArrange, startArrange]);
+
+  // Paste a photo straight from the clipboard (a screenshot, an image copied from another tab).
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      if (isTyping(e.target) || document.querySelector("dialog[open]")) return;
+      const file = [...(e.clipboardData?.files ?? [])].find((f) => f.type.startsWith("image/"));
+      if (!file) return;
+      e.preventDefault();
+      requestFile(file);
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [requestFile]);
 
   // Drop the selection if undo/redo removed the selected layer.
   useEffect(() => {
@@ -478,6 +523,17 @@ export default function Editor() {
     [doc.filters],
   );
 
+  // Hold-to-compare shows the photo in the same frame with the look and every layer taken off.
+  const canCompare = !!source && !arranging && (filtersTouched || doc.overlays.length > 0);
+  const showingBefore = comparing && canCompare;
+  const viewDoc = useMemo<EditorDoc>(() => (showingBefore ? { ...doc, filters: DEFAULT_FILTERS, overlays: [] } : doc), [showingBefore, doc]);
+  useEffect(() => {
+    if (!canCompare) setComparing(false);
+  }, [canCompare]);
+  const meterShown = !!source && !arranging && pixels > 0;
+
+  useTitle(source ? `${dirty ? "* " : ""}${edit ? edit.title : "Untitled edit"} · Editor` : "Editor");
+
   const emptyState = (
     <div className="dropzone">
       <div className="dropzone__inner">
@@ -499,7 +555,7 @@ export default function Editor() {
   );
 
   return (
-    <main className="editor" id="main">
+    <main className={`editor${source ? " editor--loaded" : ""}`} id="main">
       <input
         ref={fileRef}
         type="file"
@@ -507,7 +563,7 @@ export default function Editor() {
         hidden
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) openFile(file);
+          if (file) requestFile(file);
           e.target.value = "";
         }}
       />
@@ -554,18 +610,20 @@ export default function Editor() {
       <section className="editor__center" aria-label="Canvas">
         <Window
           title={`${edit ? edit.title : "untitled"}${dirty ? " *" : ""} — canvas.exe`}
-          className="canvas-window"
+          className={`canvas-window${meterShown || arranging ? "" : " canvas-window--quiet"}`}
           bodyClassName="canvas-window__body"
           status={
             <>
               <span className="tabular">
                 {arranging
                   ? "Drag a photo to move it · scroll or pinch to zoom · drag the divider"
-                  : comp
-                    ? `${comp.width} × ${comp.height} px · ${layoutLabel} · ${doc.overlays.length} ${doc.overlays.length === 1 ? "layer" : "layers"}`
-                    : "No photo yet"}
+                  : showingBefore
+                    ? "Showing the photo before the look"
+                    : comp
+                      ? `${comp.width} × ${comp.height} px · ${layoutLabel} · ${doc.overlays.length} ${doc.overlays.length === 1 ? "layer" : "layers"}`
+                      : "No photo yet"}
               </span>
-              {source && !arranging && pixels > 0 ? (
+              {meterShown ? (
                 <PixelMeter
                   value={pixels}
                   lookValue={lookPixels}
@@ -574,7 +632,7 @@ export default function Editor() {
                   onCommit={history.commit}
                 />
               ) : null}
-              <button type="button" className="status-btn" onClick={() => setShowKeys(true)}>
+              <button type="button" className="status-btn status-btn--keys" onClick={() => setShowKeys(true)}>
                 <Keyboard size={13} aria-hidden="true" />
                 Shortcuts
               </button>
@@ -641,7 +699,7 @@ export default function Editor() {
                 <button type="button" className="tool" onClick={flip} disabled={!source} aria-pressed={doc.flipX} aria-label="Flip photo" title="Flip photo">
                   <FlipHorizontal2 size={16} aria-hidden="true" />
                 </button>
-                <button type="button" className="tool" onClick={startArrange} disabled={!source} aria-label="Arrange photos" title="Arrange: move and zoom the photos (A)">
+                <button type="button" className="tool toolbar__arrange" onClick={startArrange} disabled={!source} aria-label="Arrange photos" title="Arrange: move and zoom the photos (A)">
                   <Move size={16} aria-hidden="true" />
                 </button>
                 <span className="toolbar__grow" />
@@ -666,7 +724,7 @@ export default function Editor() {
             <Stage
               arrange={arrangeControls}
               source={source?.canvas ?? null}
-              doc={doc}
+              doc={viewDoc}
               selectedId={selectedId}
               onSelect={(id) => {
                 setSelectedId(id);
@@ -675,10 +733,38 @@ export default function Editor() {
               onChange={updateOverlay}
               onCommit={history.commit}
               onRemove={removeOverlay}
-              onDropFile={openFile}
+              onDropFile={requestFile}
               empty={emptyState}
               fontsVersion={fontsVersion}
             />
+            {canCompare ? (
+              <button
+                type="button"
+                className="compare"
+                aria-pressed={showingBefore}
+                aria-label="Hold to compare with the photo before the look"
+                title="Hold to see the photo before the look (or hold the \ key)"
+                onPointerDown={(e) => {
+                  if (e.button !== 0) return;
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                  setComparing(true);
+                }}
+                onPointerUp={() => setComparing(false)}
+                onPointerCancel={() => setComparing(false)}
+                onLostPointerCapture={() => setComparing(false)}
+                onKeyDown={(e) => {
+                  if ((e.key === " " || e.key === "Enter") && !e.repeat) setComparing(true);
+                }}
+                onKeyUp={(e) => {
+                  if (e.key === " " || e.key === "Enter") setComparing(false);
+                }}
+                onBlur={() => setComparing(false)}
+                onContextMenu={(e) => e.preventDefault()}
+              >
+                <Eye size={14} aria-hidden="true" />
+                <span className="compare__label">{showingBefore ? "Before" : "Hold to compare"}</span>
+              </button>
+            ) : null}
             {loading ? (
               <div className="stage-loading" role="status">
                 <LoaderCircle size={28} className="spin" aria-hidden="true" />
@@ -707,6 +793,7 @@ export default function Editor() {
             onRaise={reorder}
             onAddText={addText}
             onShowShortcuts={() => setShowKeys(true)}
+            focusText={textFocus}
           />
         </div>
         <div className="editor__group" data-active={tab === "stickers"}>
@@ -727,6 +814,20 @@ export default function Editor() {
         </dl>
         <p className="hint">On a touchscreen: drag to move, pinch to resize and twist two fingers to rotate.</p>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!pendingFile}
+        title="new_photo.exe"
+        message="Start over with this photo? The edit you're working on has unsaved changes, and they'll be lost."
+        confirmLabel="Start over"
+        danger
+        onConfirm={() => {
+          const file = pendingFile;
+          setPendingFile(null);
+          if (file) openFile(file);
+        }}
+        onClose={() => setPendingFile(null)}
+      />
 
       <ConfirmDialog
         open={blocker.state === "blocked"}

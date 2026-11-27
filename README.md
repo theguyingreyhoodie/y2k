@@ -26,14 +26,15 @@ No AI: every look is plain canvas maths running in your browser, and your photo 
 - **Layouts:** Single, Twin, Mirror and Pixel Twin. Two-photo layouts start in a 1:1 frame (or pick Fit, 4:5 or 3:4). **Arrange** mode lets you drag each photo inside its panel, zoom it with the wheel or a pinch, and drag the divider anywhere from 25% to 75%; you can also swap sides and join the panels with a cut, a thin line or a soft fade. Rotate and flip the source photo.
 - **Pixelation meter:** whenever something is pixelated (always in Pixel Twin, where it's the twin photo on the right), a **Pixelation** meter sits under the canvas. Drag it down for a fine mosaic or up for a few big squares, use − and + for small steps, and click the number to go back to the look's own size.
 - **19 adjustments:** brightness, contrast, saturation, hue, warmth, tint, fade, sepia, grayscale, blur, pixelate, soft focus, dreamy glow, film grain, vignette, RGB split, scanlines, plus six split tones (Retro, Ember, Cinema, Midnight, Rose, Olive) and six duotones. Soft focus and Dreamy glow each have their own blur slider in the Effects tab, which sets how far the haze or glow spreads.
-- **43 built-in stickers** in seven groups (stars and sparkles; hearts, lips and kiss marks; flowers, cherries and bows; word stickers like Young Dumb & Broke, Favorite Person and the advisory label; the moustache and manga marks; washi tape and paper scraps; disco balls, a pixel cursor and other party bits), and your own uploads: the server cuts out white backgrounds (flood-filled from the edges, so white details inside the sticker survive). Admin accounts' stickers are shared with everyone.
+- **18 built-in stickers**, all drawn for this project (chrome sparkle, stars, pixel hearts, a warning label, manga marks, a disco ball, a CD, a pixel cursor and a few more), plus your own uploads: the server cuts out white backgrounds (flood-filled from the edges, so white details inside the sticker survive). The sticker panel can link to a Pinterest board of stickers for people to save and upload themselves; set `STICKER_BOARD_URL` in `frontend/src/editor/stickers.ts` to show it. Admin accounts' stickers are shared with everyone.
 - **Text layers** in 15 styles (chrome, holo, neon, bubble, horror, datestamp, white, black, meme caption, glitter, VHS, echo, tooltip, chat bubble, speech bubble) and 9 fonts.
-- **Undo / redo** and keyboard shortcuts (`⌘Z`, `⇧⌘Z`, `⌘S`, `⌘D`, `⌫`, arrows, `[ ]`, `T`, `A`, `?`).
+- **Hold to compare:** hold the eye button on the corner of the canvas (or the `\` key) to see the photo before the look and layers, and let go to come back.
+- **Undo / redo** and keyboard shortcuts (`⌘Z`, `⇧⌘Z`, `⌘S`, `⌘D`, `⌘V` to paste a photo, `⌫`, arrows, `[ ]`, `T`, `A`, `\`, `?`).
 - **Touch gestures:** drag, pinch to resize and twist to rotate on phones; trackpad pinch on desktop.
 - **Lossless re-edit:** saved edits keep the original photo and every layer, not just the flattened PNG.
 - **Gallery:** re-edit, rename, download, share (public link plus Pinterest, X and Tumblr), delete.
 - **Accounts:** sign up, login with lockout after 5 failed tries, password reset by email. Resetting a password signs out every other session.
-- Light and dark themes (follow the system, toggle to override) and a responsive layout down to phone width.
+- Light and dark themes (follow the system, toggle to override) and a responsive layout down to phone width. On phones and tablets the photo stays pinned on screen while the open panel scrolls, so every look and slider is judged against the picture.
 
 <p>
   <img src="docs/filters.png" alt="The Effects tab of filters.dll: Soft focus and Dreamy glow, each with its blur slider indented underneath" width="296" />
@@ -115,7 +116,8 @@ backend/app/        FastAPI app: config, db (Mongo + GridFS), security, images (
 backend/tests/      pytest suite
 frontend/src/editor renderer, presets, stickers, text styles, undo history, editor panels
 frontend/src/pages  landing, auth, editor, gallery, public share page
-frontend/public     stickers (39 WebP cut-outs, 3 PNGs, 1 SVG), sample photo
+frontend/public     stickers (14 WebP, 3 PNG pixel-art, 1 SVG), sample photo
+frontend/scripts    the code that draws the stickers (see Credits)
 PRODUCT.md          who it's for and what it must keep doing
 DESIGN.md           the visual system (tokens, components, rules)
 ```
@@ -137,11 +139,10 @@ This is a ground-up rewrite of the Emergent-generated version. The original coul
 - Sample portrait (the in-app "Use the sample" photo): Unsplash photo [`photo-1581841064838-a470c740e8ee`](https://images.unsplash.com/photo-1581841064838-a470c740e8ee), Unsplash License. The screenshots in this README use other photos.
 - Fonts from Google Fonts: Unbounded, Chivo, IBM Plex Mono, Press Start 2P, UnifrakturCook, Tinos, Anton, VT323.
 - Icons: [Lucide](https://lucide.dev).
-- The parental advisory sticker comes from the original Y2KEDIT build and the moustache was drawn for this version. The other 41 stickers are cut out of sticker images collected on Pinterest: backgrounds removed, die-cut borders kept, and the two pixel-art ones redrawn on their pixel grid so they stay sharp.
-- Those 41 designs belong to their original artists and aren't licensed for reuse from this repo. If one of them is yours, [open an issue](https://github.com/theguyingreyhoodie/y2k/issues) and it'll be credited or taken down, whichever you prefer.
+- Stickers: all 18 built-in ones are original to this project. The moustache is a hand-written SVG; the other 17 are drawn by code in `frontend/scripts/stickers/` (shapes, paper grain, die-cut borders and all), so there are no third-party images in the set. To redraw them after changing the art: `cd frontend && npm i --no-save playwright-core && node scripts/stickers/build.mjs`. It uses the Chrome already on your machine and writes to `frontend/public/stickers/`. Stickers people upload are their own responsibility; don't upload other artists' work from an admin account, because admin stickers are shared with everyone.
 
 ## License
 
 The source code is released under the [MIT License](LICENSE).
 
-The licence covers the code only. It does not cover the third-party material listed under [Credits](#credits): the sticker images in `frontend/public/stickers/` (apart from `moustache.svg`, which was drawn for this project), the sample portrait, the fonts, and the photos that appear in the screenshots. Those stay under their own owners' terms.
+The licence covers the code, including the built-in stickers, which are all original to this project. It does not cover the third-party material listed under [Credits](#credits): the sample portrait, the fonts, and the photos that appear in the screenshots. Those stay under their own owners' terms.

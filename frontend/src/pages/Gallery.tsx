@@ -5,6 +5,7 @@ import { Check, Copy, Download, Globe, Lock, Pencil, Share2, Trash2, WandSparkle
 import { ConfirmDialog, Dialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, downloadBlob, errorMessage, fetchBlob, slugFilename, type Edit } from "@/lib/api";
+import { useTitle } from "@/lib/title";
 
 const dateFmt = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" });
 
@@ -16,6 +17,7 @@ export default function Gallery() {
   const [deleting, setDeleting] = useState<Edit | null>(null);
   const [busyDelete, setBusyDelete] = useState(false);
   const [renaming, setRenaming] = useState<string | null>(null);
+  useTitle("Gallery");
 
   const load = () => {
     setLoadError("");
@@ -97,7 +99,7 @@ export default function Gallery() {
         </div>
       ) : edits.length === 0 ? (
         <Window title="empty.txt" className="gallery__notice" bodyClassName="gallery__empty">
-          <img src="/stickers/disco_ball.webp" alt="" width={96} height={96} />
+          <img src="/stickers/disco_ball.webp" alt="" width={96} height={101} />
           <h2>No edits yet</h2>
           <p>Make your first one and it lands here, with every layer kept so you can come back and tweak it.</p>
           <Link to="/editor" className="btn">
