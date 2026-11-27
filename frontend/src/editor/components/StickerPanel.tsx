@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/Dialog";
 import { Window } from "@/components/Window";
 import { api, errorMessage, type CustomSticker } from "@/lib/api";
-import { BUILTIN_STICKERS, STICKER_GROUPS, registerCustomSticker, stickerUrl } from "../stickers";
+import { BUILTIN_STICKERS, STICKER_BOARD_URL, STICKER_GROUPS, registerCustomSticker, stickerUrl } from "../stickers";
 
 interface StickerPanelProps {
   disabled: boolean;
@@ -113,6 +113,7 @@ export function StickerPanel({ disabled, stickers, onStickersChange, onAdd, isAd
               <input type="checkbox" checked={cutOut} onChange={(e) => setCutOut(e.target.checked)} />
               <span>Cut out the white background</span>
             </label>
+            <p className="hint">Only upload images you're allowed to use.</p>
             {isAdmin ? <p className="hint">You're an admin, so this sticker is shared with everyone.</p> : null}
             <div className="sticker-upload__actions">
               <button type="button" className="btn btn--chrome btn--sm" onClick={() => setPending(null)} disabled={uploading}>
@@ -192,6 +193,16 @@ export function StickerPanel({ disabled, stickers, onStickersChange, onAdd, isAd
           </div>
         )}
       </div>
+
+      {STICKER_BOARD_URL ? (
+        <p className="hint stickers__more">
+          Want more?{" "}
+          <a className="link-btn" href={STICKER_BOARD_URL} target="_blank" rel="noopener noreferrer">
+            Browse our Pinterest board
+          </a>
+          , save the ones you like, then upload them here.
+        </p>
+      ) : null}
 
       <ConfirmDialog
         open={!!toDelete}

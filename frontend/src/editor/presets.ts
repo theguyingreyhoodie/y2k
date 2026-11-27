@@ -85,7 +85,6 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 92, contrast: 108, saturation: 70, soften: 60, glow: 26, blur: 1.5, splitTone: "rose", splitAmount: 40, grain: 18, pixelate: 22 },
     layout: "pixel_twin",
     compose: { split: 0.68 },
-    stickers: [{ ref: "builtin:red_lips", x: 0.76, y: 0.24, size: 0.2, rotation: -8 }],
     texts: [{ text: "#SWAG", font: "poster", style: "glitter", x: 0.19, y: 0.89, size: 0.12 }],
   },
   {
@@ -131,7 +130,6 @@ export const PRESETS: Preset[] = [
     compose: { split: 0.54 },
     stickers: [
       { ref: "builtin:favorite_person", x: 0.36, y: 0.84, size: 0.18, rotation: -4 },
-      { ref: "builtin:kiss_marks", x: 0.78, y: 0.2, size: 0.2, rotation: 10 },
     ],
   },
   {
@@ -196,7 +194,7 @@ export const PRESETS: Preset[] = [
     label: "Hotter than Hell",
     filters: { brightness: 74, contrast: 128, saturation: 40, tint: -18, warmth: -4, grain: 34, blur: 1, vignette: 54 },
     layout: "twin",
-    stickers: [{ ref: "builtin:parental_advisory", x: 0.5, y: 0.72, size: 0.13 }],
+    stickers: [{ ref: "builtin:warning_label", x: 0.5, y: 0.72, size: 0.13 }],
     texts: [{ text: "hotter than hell", font: "gothic", style: "horror", x: 0.2, y: 0.08, size: 0.055 }],
   },
   {
@@ -205,7 +203,7 @@ export const PRESETS: Preset[] = [
     filters: { brightness: 106, contrast: 112, saturation: 58, warmth: 4, tint: 6, fade: 8, soften: 40, glow: 22, vignette: 20 },
     layout: "twin",
     compose: { seam: "line" },
-    stickers: [{ ref: "builtin:parental_advisory", x: 0.5, y: 0.8, size: 0.15 }],
+    stickers: [{ ref: "builtin:warning_label", x: 0.5, y: 0.8, size: 0.15 }],
   },
   // ---- The original set ----
   {
@@ -219,7 +217,7 @@ export const PRESETS: Preset[] = [
     label: "Sacred Mono",
     filters: { grayscale: 100, contrast: 132, brightness: 96, grain: 14, vignette: 34 },
     layout: "single",
-    stickers: [{ ref: "builtin:red_butterfly", x: 0.82, y: 0.8, size: 0.24, rotation: 8 }],
+    stickers: [{ ref: "builtin:twin_stars", x: 0.82, y: 0.8, size: 0.2, rotation: 8 }],
   },
   {
     id: "pixel_pop",
@@ -233,7 +231,7 @@ export const PRESETS: Preset[] = [
     label: "Advisory",
     filters: { grayscale: 100, contrast: 132, grain: 22 },
     layout: "single",
-    stickers: [{ ref: "builtin:parental_advisory", x: 0.2, y: 0.9, size: 0.1 }],
+    stickers: [{ ref: "builtin:warning_label", x: 0.2, y: 0.9, size: 0.1 }],
   },
   {
     id: "grunge",
@@ -255,7 +253,7 @@ export const PRESETS: Preset[] = [
     layout: "single",
     stickers: [
       { ref: "builtin:green_star", x: 0.8, y: 0.2, size: 0.13, rotation: 12 },
-      { ref: "builtin:clover", x: 0.14, y: 0.76, size: 0.14, rotation: -10 },
+      { ref: "builtin:cd", x: 0.14, y: 0.76, size: 0.14, rotation: -10 },
     ],
   },
   {
