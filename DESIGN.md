@@ -163,7 +163,7 @@ A pale aqua sky with two loud accents: aqua for action, cyber pink for selection
 
 ## Layout
 
-The editor is a three-column desktop: presets/filters on the left (about 296px), the canvas window in the middle (sticky), stickers and layer properties on the right. On wide screens the side columns scroll on their own, so the stage never moves. Below 1180px it becomes one column: stage first, a sticky segmented tab bar (Looks / Adjust / Stickers / Layer), then one panel at a time. Marketing pages use a 1280px container and alternate sky sections, ground sections and one black band. Spacing steps are 6, 10, 14, 20 and 28px; window bodies use 10–14px padding and panels sit 14px apart.
+The editor is a three-column desktop: presets/filters on the left (about 296px), the canvas window in the middle (sticky), stickers and layer properties on the right. On wide screens the side columns scroll on their own, so the stage never moves. Below 1180px a segmented tab bar (Looks / Adjust / Stickers / Layer) shows one panel at a time, and the canvas stays pinned so a look or a slider is always judged against the photo: from 860px the canvas takes the left at full height with the tabs and panel in a 336px column on the right; under 860px the canvas sits on top at up to 46% of the height and only the panel scrolls beneath it. Viewports too short for either (a phone on its side) fall back to one scrolling column, stage first. Marketing pages use a 1280px container and alternate sky sections, ground sections and one black band. Spacing steps are 6, 10, 14, 20 and 28px; window bodies use 10–14px padding and panels sit 14px apart.
 
 ## Elevation & Depth
 
@@ -187,7 +187,7 @@ Rounded but not blobby. Windows are 12px; fields and toolbar tools 9–10px; but
 - **Shape:** full pill (999px), 40px tall (32px small, 50px large).
 - **Primary (Aqua Jelly):** vertical gradient #8adfff → #0a7bbd → #075a8e, white Unbounded 600 label, 1px #044a75 edge, gloss band on the top 40%.
 - **Pink Jelly:** #ff9eea → #d4179f → #990a76, for creative actions (Text, Add sticker).
-- **Chrome:** #ffffff → #e3eaf2 → #a9b8c9 with ink text, for neutral actions (Save, Cancel, Upload).
+- **Chrome:** #ffffff → #e3eaf2 → #a9b8c9 with ink text, for neutral actions (Save, Cancel, Upload). In dark mode it dims to pewter (#efeaf7 → #b3aac6 → #6f6684) so it never outshines the aqua primary or the photo.
 - **Hover / Active / Focus:** lift 1px and brighten 6%; press down 1px with an inset shadow; focus is a 2px surface gap plus a 2px pink ring.
 
 ### Chips
@@ -211,6 +211,9 @@ Rounded but not blobby. Windows are 12px; fields and toolbar tools 9–10px; but
 
 ### Program Window (signature)
 Every panel is a window: a 30px title bar (light: dark ink on pale aqua glass with a pink star; dark: white on a magenta-to-maroon gloss), a filename title, three jelly "lights" (pink, gold, lime) or a real close button in dialogs, a body, and an optional status bar with measurements in Plex Mono.
+
+### Hold to compare
+A dark glass pill on the bottom-left corner of the stage (an eye icon alone on phones), shown once the photo has a look or a layer. Holding it, or the `\` key, shows the photo in the same frame with the look and layers taken off; it turns Pink Jelly while held.
 
 ### Preset Tile (signature)
 A 4:5 thumbnail of the user's own photo rendered through the real engine with that preset, labelled below. Selected: pink border plus a 2px pink ring.
