@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { WandSparkles } from "lucide-react";
 import { Window } from "@/components/Window";
 import { useAuth } from "@/lib/auth";
-import { newDoc } from "@/editor/defaults";
+import { TEXT_STYLES, newDoc } from "@/editor/defaults";
 import { ensureFonts } from "@/editor/fonts";
 import { PRESET_BY_ID, applyPreset } from "@/editor/presets";
 import { makeCanvas, renderComplete } from "@/editor/render";
@@ -42,13 +42,16 @@ async function heroSource(): Promise<HTMLCanvasElement> {
   return c;
 }
 
-async function renderPreset(src: HTMLCanvasElement, presetId: string, maxSide: number): Promise<string> {
+/** `wide` keeps a two-photo look at the photos' own shape (two 4:5 panels, 8:5) instead of the editor's 1:1 start. */
+async function renderPreset(src: HTMLCanvasElement, presetId: string, maxSide: number, wide: boolean): Promise<string> {
   const preset = PRESET_BY_ID.get(presetId)!;
-  const canvas = await renderComplete(src, applyPreset(newDoc(), preset), maxSide);
+  let doc = applyPreset(newDoc(), preset);
+  if (wide) doc = { ...doc, compose: { ...doc.compose, frame: "photo", autoFrame: false } };
+  const canvas = await renderComplete(src, doc, maxSide);
   return canvas.toDataURL("image/jpeg", 0.88);
 }
 
-function useRenders(ids: string[], maxSide: number) {
+function useRenders(ids: string[], maxSide: number, wide = false) {
   const [renders, setRenders] = useState<Record<string, string>>({});
   const key = ids.join(",");
   useEffect(() => {
@@ -57,7 +60,7 @@ function useRenders(ids: string[], maxSide: number) {
       const src = await heroSource();
       for (const id of ids) {
         if (!alive) return;
-        const url = await renderPreset(src, id, maxSide);
+        const url = await renderPreset(src, id, maxSide, wide);
         if (!alive) return;
         setRenders((r) => ({ ...r, [id]: url }));
         await new Promise((r) => setTimeout(r, 0));
@@ -67,7 +70,7 @@ function useRenders(ids: string[], maxSide: number) {
       alive = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, maxSide]);
+  }, [key, maxSide, wide]);
   return renders;
 }
 
@@ -120,7 +123,9 @@ function HeroReel() {
       <div className="reel__list" role="group" aria-label="Try a preset">
         {REEL.map((id, i) => (
           <button key={id} type="button" className="reel__chip" aria-pressed={i === index} onClick={() => pick(i)}>
-            <span className="reel__dot" aria-hidden="true" />
+            <span className="reel__thumb" aria-hidden="true">
+              {renders[id] ? <img src={renders[id]} alt="" /> : null}
+            </span>
             {PRESET_BY_ID.get(id)?.label}
           </button>
         ))}
@@ -130,7 +135,7 @@ function HeroReel() {
 }
 
 function LayoutDemo({ presetId, title, caption }: { presetId: string; title: string; caption: string }) {
-  const renders = useRenders([presetId], 1100);
+  const renders = useRenders([presetId], 1100, true);
   return (
     <figure className="layout-demo">
       <Window title={title} className="layout-demo__window" bodyClassName="layout-demo__body" lights>
@@ -167,17 +172,17 @@ function TextSample({ text, style, font, rotate = 0 }: { text: string; style: Te
 
 // Stickers live in the gutters either side of the centred panel (x is the left edge, in %).
 const WALL = [
-  { key: "red_lips", x: 4, y: 10, s: 112, r: -12 },
+  { key: "cd", x: 4, y: 10, s: 104, r: -12 },
   { key: "disco_ball", x: 12, y: 44, s: 124, r: 0 },
   { key: "anger_vein", x: 3, y: 70, s: 74, r: -10 },
   { key: "chrome_sparkle", x: 15, y: 16, s: 58, r: 0 },
-  { key: "red_butterfly", x: 11, y: 76, s: 112, r: 10 },
+  { key: "favorite_person", x: 10, y: 80, s: 132, r: 8 },
   { key: "arrow_cursor", x: 83, y: 6, s: 52, r: 10 },
-  { key: "retro_star", x: 90, y: 30, s: 96, r: 14 },
-  { key: "pink_bow", x: 80, y: 50, s: 104, r: -6 },
-  { key: "green_cat", x: 91, y: 66, s: 84, r: 8 },
+  { key: "paper_star", x: 90, y: 30, s: 96, r: 14 },
+  { key: "twin_stars", x: 80, y: 50, s: 104, r: -6 },
+  { key: "life_hearts", x: 89, y: 70, s: 116, r: 8 },
   { key: "blue_pixel_heart", x: 82, y: 80, s: 72, r: 0 },
-  { key: "cherry_bow", x: 3, y: 30, s: 70, r: -14 },
+  { key: "excited_marks", x: 4, y: 30, s: 48, r: -14 },
   { key: "green_star", x: 92, y: 4, s: 64, r: 18 },
 ];
 
@@ -264,8 +269,8 @@ export default function Landing() {
             Stickers that were cool in 2003. Still are.
           </h2>
           <p className="section-lede">
-            {BUILTIN_STICKERS.length} built-in stickers, eight kinds of chrome-and-neon text, and your own uploads with the white background cut out
-            for you.
+            {BUILTIN_STICKERS.length} built-in stickers, {TEXT_STYLES.length} text styles from chrome to neon, and your own uploads with the white
+            background cut out for you.
           </p>
           <div className="wall__texts">
             <TextSample text="XOXO" style="chrome" font="unbounded" rotate={-4} />

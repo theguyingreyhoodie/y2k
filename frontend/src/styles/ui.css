@@ -209,6 +209,14 @@
   --glow: rgba(70, 100, 140, 0.4);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
+/* At night bright white chrome would outshine the aqua primary and the photo: it dims to pewter. */
+[data-theme="dark"] .btn--chrome {
+  --top: #efeaf7;
+  --mid: #b3aac6;
+  --bottom: #6f6684;
+  --edge: #2a2436;
+  --glow: rgba(0, 0, 0, 0.7);
+}
 .btn--danger {
   --top: #ffb1c2;
   --mid: #ff3d6e;
@@ -368,6 +376,12 @@ textarea.input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .range:active::-webkit-slider-thumb { transform: scale(1.15); }
+/* Fingers get a taller track to land on and a bigger bead to hold. */
+@media (pointer: coarse) {
+  .range { height: 34px; }
+  .range::-webkit-slider-thumb { width: 24px; height: 24px; margin-top: -9px; }
+  .range::-moz-range-thumb { width: 24px; height: 24px; }
+}
 .range:focus-visible::-webkit-slider-thumb { box-shadow: var(--ring); }
 .range:focus-visible::-moz-range-thumb { box-shadow: var(--ring); }
 
@@ -430,6 +444,10 @@ textarea.input {
   transition: border-color 140ms, background 140ms;
 }
 .chip:hover { border-color: var(--pink); }
+@media (pointer: coarse) {
+  .chip { height: 38px; }
+  .seg > button { height: 36px; }
+}
 .chip[aria-pressed="true"] {
   border-color: var(--pink-deep);
   background: linear-gradient(180deg, #ff9eea, #d4179f 55%, #990a76);
