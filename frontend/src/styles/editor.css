@@ -399,7 +399,7 @@
   display: grid;
   justify-items: center;
   gap: 10px;
-  max-width: 440px;
+  max-width: 520px;
   text-align: center;
 }
 .dropzone__sticker {
@@ -410,7 +410,10 @@
   font-size: clamp(24px, 3vw, 32px);
   font-weight: 900;
 }
-.dropzone__hint { color: var(--ink-2); }
+.dropzone__hint {
+  max-width: 40ch;
+  color: var(--ink-2);
+}
 .dropzone__actions {
   display: flex;
   flex-wrap: wrap;
@@ -431,6 +434,45 @@
   color: var(--ink-2);
   font-weight: 700;
 }
+/* Hold-to-compare: sits on the corner of the stage, the way a photo app keeps it on the picture. */
+.compare {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(10, 8, 16, 0.72);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: background 140ms, transform 140ms var(--ease-out);
+}
+.compare:hover { background: rgba(10, 8, 16, 0.86); }
+.compare[aria-pressed="true"] {
+  border-color: #fff;
+  background: var(--pink-deep);
+  transform: scale(0.97);
+}
+@media (pointer: coarse) {
+  .compare { height: 36px; padding: 0 14px 0 12px; }
+  .seg--sm > button { height: 32px; }
+  .pixel-meter__range { height: 34px; }
+  .pixel-meter__step { width: 30px; height: 30px; }
+}
+
 .status-btn {
   display: inline-flex;
   align-items: center;
@@ -828,10 +870,114 @@ kbd {
   .toolbar { gap: 4px; padding: 8px; }
   .toolbar__label,
   .toolbar__copy,
-  .toolbar__sep { display: none; }
+  .toolbar__sep,
+  .toolbar__arrange { display: none; } /* Arrange is also the pink button in layout.cfg */
   .toolbar .btn--sm { padding: 0 10px; }
   .toolbar .tool { width: 32px; height: 32px; }
   .editor__tabs { top: 62px; }
+  /* On a phone the photo is small, so the button is just the eye until it's held. */
+  .compare {
+    left: 14px;
+    bottom: 14px;
+    gap: 0;
+    min-width: 36px;
+    justify-content: center;
+    padding: 0 10px;
+  }
+  .compare:not([aria-pressed="true"]) .compare__label { display: none; }
+  .compare[aria-pressed="true"] { gap: 6px; }
+}
+@media (max-width: 380px) {
+  .toolbar { gap: 3px; padding: 8px 6px; }
+  .toolbar .tool { width: 30px; }
+  .toolbar .btn--sm { padding: 0 9px; }
+}
+
+/* ---------- Pinned canvas: below three columns the photo still never leaves the screen ----------
+   Only the open panel scrolls, so a look or a slider is always judged against the picture. The sizes
+   here are mirrored by stageMaxHeight() in Stage.tsx. Viewports too short for either layout keep the
+   plain scrolling page above. */
+
+/* Phones upright: canvas on top, tabs, then the open panel scrolling beneath. */
+@media (max-width: 859px) and (min-height: 620px) {
+  .editor--loaded {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    height: calc(100dvh - 64px);
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  .editor--loaded .editor__center {
+    order: 1;
+    flex: none;
+  }
+  .editor--loaded .editor__tabs {
+    order: 2;
+    flex: none;
+    position: static;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  .editor--loaded .editor__left,
+  .editor--loaded .editor__right {
+    order: 3;
+    flex: 1 1 0;
+    max-width: none;
+  }
+  .editor--loaded .canvas-window__stage { padding: 8px; }
+  .editor--loaded .stage { min-height: 0; } /* the photo sets the height; no empty checkerboard around it */
+}
+
+/* Tablets and small laptop windows: canvas on the left at full height, tabs and one panel on the right. */
+@media (min-width: 860px) and (max-width: 1180px) and (min-height: 520px) {
+  .editor--loaded {
+    grid-template-columns: minmax(0, 1fr) 336px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "center tabs" "center panel";
+    gap: 10px 14px;
+    height: calc(100dvh - 64px);
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  .editor--loaded .editor__tabs {
+    position: static;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  .editor--loaded .editor__left,
+  .editor--loaded .editor__right {
+    grid-area: panel;
+    max-width: none;
+  }
+  .editor--loaded .presets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Shared by both: the panel column is the only thing that scrolls. */
+@media (max-width: 859px) and (min-height: 620px), (min-width: 860px) and (max-width: 1180px) and (min-height: 520px) {
+  .editor--loaded .editor__left,
+  .editor--loaded .editor__right {
+    align-content: start;
+    align-self: stretch;
+    width: auto;
+    min-height: 0;
+    margin: -4px -6px 0;
+    padding: 4px 6px calc(28px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .editor--loaded .editor__left:not(:has(.editor__group[data-active="true"])),
+  .editor--loaded .editor__right:not(:has(.editor__group[data-active="true"])) { display: none; }
+}
+
+/* A phone has no keyboard to list shortcuts for, and there the size line gives its row to the photo:
+   the status bar only shows when it carries the pixelation meter or the arrange hint. */
+@media (max-width: 859px) {
+  .status-btn--keys { display: none; }
+  .canvas-window--quiet .window__status { display: none; }
+}
+@media (max-width: 640px) {
+  .canvas-window .window__status:has(.pixel-meter) > .tabular { display: none; }
 }
 
 /* Wide screens: the side columns scroll on their own so the stage never moves. */

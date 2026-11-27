@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { ArrowDown, ArrowUp, CopyPlus, FlipHorizontal2, Trash2, Type } from "lucide-react";
 import { Slider } from "@/components/Slider";
 import { Window } from "@/components/Window";
@@ -17,6 +18,8 @@ interface LayerPanelProps {
   onRaise: (dir: 1 | -1) => void;
   onAddText: () => void;
   onShowShortcuts: () => void;
+  /** Bumped each time a text layer is added, so its words can be typed straight away. */
+  focusText: number;
 }
 
 export function LayerPanel({
@@ -31,7 +34,21 @@ export function LayerPanel({
   onRaise,
   onAddText,
   onShowShortcuts,
+  focusText,
 }: LayerPanelProps) {
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const focused = useRef(focusText);
+  useEffect(() => {
+    if (focused.current === focusText || !textRef.current) return;
+    focused.current = focusText;
+    // With a mouse and keyboard, new text is ready to type over. On a touchscreen that would throw the
+    // keyboard up over the photo before the text has even been placed, so it waits for a tap.
+    if (window.matchMedia?.("(pointer: fine)").matches) {
+      textRef.current.focus();
+      textRef.current.select();
+    }
+  }, [focusText, layer?.id]);
+
   if (!layer) {
     return (
       <Window title="tips.txt" className="panel" bodyClassName="tips">
@@ -99,12 +116,16 @@ export function LayerPanel({
           <label className="field">
             <span className="label">Text</span>
             <textarea
+              ref={textRef}
               className="input"
               rows={2}
               value={layer.text}
               maxLength={500}
               onChange={(e) => onChange({ text: e.target.value } as Partial<Overlay>)}
               onBlur={onCommit}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") e.currentTarget.blur();
+              }}
             />
           </label>
           <div className="field">
