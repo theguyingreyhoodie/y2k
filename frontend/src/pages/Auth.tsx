@@ -6,8 +6,10 @@ import { Window } from "@/components/Window";
 import { safeNext } from "@/components/RequireAuth";
 import { api, errorMessage, type User } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useTitle } from "@/lib/title";
 
-function AuthShell({ title, heading, lede, children, foot }: { title: string; heading: ReactNode; lede: string; children: ReactNode; foot?: ReactNode }) {
+function AuthShell({ title, heading, lede, children, foot, tab }: { title: string; heading: ReactNode; lede: string; children: ReactNode; foot?: ReactNode; tab: string }) {
+  useTitle(tab);
   return (
     <main className="auth sky" id="main">
       <span className="bubble" style={{ width: 220, height: 220, left: "6%", top: "14%" }} aria-hidden="true" />
@@ -92,6 +94,7 @@ export function Login() {
   return (
     <AuthShell
       title="sign_in.exe"
+      tab="Sign in"
       heading="Welcome back."
       lede="Sign in to pick up your edits where you left them."
       foot={
@@ -103,7 +106,7 @@ export function Login() {
       <form className="auth__form" onSubmit={submit} noValidate={false}>
         <label className="field">
           <span className="label">Email</span>
-          <input className="input" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!error || undefined} />
+          <input className="input" type="email" required autoFocus autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!error || undefined} />
         </label>
         <PasswordField label="Password" value={password} onChange={setPassword} autoComplete="current-password" invalid={!!error} />
         {error ? (
@@ -155,6 +158,7 @@ export function Register() {
   return (
     <AuthShell
       title="new_account.exe"
+      tab="Make an account"
       heading="Make an account."
       lede="Free. Your edits save to your own gallery, ready to re-edit or share."
       foot={
@@ -168,7 +172,7 @@ export function Register() {
           <span className="label">
             Name <span className="label__optional">(optional)</span>
           </span>
-          <input className="input" autoComplete="nickname" maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />
+          <input className="input" autoFocus autoComplete="nickname" maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />
         </label>
         <label className="field">
           <span className="label">Email</span>
@@ -210,6 +214,7 @@ export function ForgotPassword() {
   return (
     <AuthShell
       title="forgot.exe"
+      tab="Forgot password"
       heading="Forgot it? Happens."
       lede="Enter your email and we'll send a link to choose a new password."
       foot={
@@ -273,7 +278,7 @@ export function ResetPassword() {
 
   if (!token) {
     return (
-      <AuthShell title="reset.exe" heading="That link is incomplete." lede="Open the link from your email again, or ask for a new one.">
+      <AuthShell title="reset.exe" tab="New password" heading="That link is incomplete." lede="Open the link from your email again, or ask for a new one.">
         <Link to="/forgot-password" className="btn btn--lg btn--block">
           Get a new link
         </Link>
@@ -282,7 +287,7 @@ export function ResetPassword() {
   }
 
   return (
-    <AuthShell title="reset.exe" heading="Choose a new password." lede="This signs you out everywhere else.">
+    <AuthShell title="reset.exe" tab="New password" heading="Choose a new password." lede="This signs you out everywhere else.">
       <form className="auth__form" onSubmit={submit}>
         <PasswordField label="New password" value={password} onChange={setPassword} autoComplete="new-password" />
         <PasswordField label="Type it again" value={confirm} onChange={setConfirm} autoComplete="new-password" invalid={!!error && password !== confirm} />
